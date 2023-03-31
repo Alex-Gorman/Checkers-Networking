@@ -1,4 +1,4 @@
-import GameClientMVC.ClientGame;
+import GameMVC.ClientGame;
 
 import javax.swing.*;
 import java.io.*;

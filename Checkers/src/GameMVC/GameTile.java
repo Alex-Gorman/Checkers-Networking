@@ -50,8 +50,20 @@ public class GameTile extends JButton {
 
     public void assignPiece(Piece p) {
         piece = p;
-        ImageIcon icon = new ImageIcon(createBlackCircleImage(p.color));
-        this.setIcon(icon);
+
+        /* If not king */
+        if (!p.isKing()) {
+            ImageIcon icon = new ImageIcon(createCircleImage(p.color));
+            this.setIcon(icon);
+        }
+        else {
+            ImageIcon icon = new ImageIcon(createCircleKingImage(p.color));
+            this.setIcon(icon);
+        }
+    }
+
+    public void assignPieceToBeKing(Piece p) {
+        piece  = p;
     }
 
     public void clearPiece() {
@@ -59,12 +71,26 @@ public class GameTile extends JButton {
         this.setIcon(null);
     }
 
-    private static BufferedImage createBlackCircleImage(Color color) {
+    private static BufferedImage createCircleImage(Color color) {
         int circleSize = 55;
         BufferedImage image = new BufferedImage(circleSize, circleSize, BufferedImage.TYPE_INT_ARGB);
         Graphics g = image.getGraphics();
         g.setColor(color);
         g.fillOval(0, 0, circleSize, circleSize);
+        g.dispose();
+        return image;
+    }
+
+    private static BufferedImage createCircleKingImage(Color color) {
+        int circleSize = 55;
+        BufferedImage image = new BufferedImage(circleSize, circleSize, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = image.getGraphics();
+        g.setColor(color);
+        g.fillOval(0, 0, circleSize, circleSize);
+        g.setColor(new Color(255,215,0));
+        int innerCircleSize = circleSize * 1/2;
+        int innerCircleOffset = (circleSize - innerCircleSize) / 2;
+        g.fillOval(innerCircleOffset, innerCircleOffset, innerCircleSize, innerCircleSize);
         g.dispose();
         return image;
     }

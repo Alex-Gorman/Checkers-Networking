@@ -1,5 +1,6 @@
 package GameMVC;
 
+import GameMVC.Piece;
 import GameMVC.GameController;
 import GameMVC.GameModel;
 import GameMVC.GameModelSubscriber;
@@ -15,13 +16,18 @@ public class GameView extends Panel implements GameModelSubscriber {
 
     GameModel model;
 
-    public GameView() {
+    Boolean host;
+
+    public GameView(Boolean host) {
+
+        this.host = host;
 
         /* 8 x 8 grid layout */
         this.setLayout(new GridLayout(8, 8));
     }
 
     public void initializeBoardChips() {
+
         /* Create the tiles of the game board */
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
@@ -30,23 +36,9 @@ public class GameView extends Panel implements GameModelSubscriber {
             }
         }
 
-        /* Set the black player (2) moves */
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 8; col++) {
-                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
-                    model.addPiecePlayerTwo(new Piece(row, col, false, Color.BLACK));
-                }
-            }
-        }
+        if (host) initializeHostGameBoard();
+        else initializeClientGameBoard();
 
-        /* Set the red player (1) moves */
-        for (int row = 5; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
-                    model.addPiecePlayerOne(new Piece(row, col, true, Color.RED));
-                }
-            }
-        }
         modelUpdated();
     }
 
@@ -87,5 +79,55 @@ public class GameView extends Panel implements GameModelSubscriber {
         /* Tiles player can move to */
         model.getTilesPlayerCanMoveTo().forEach(tile -> tile.setBackground(Color.ORANGE));
     }
+
+    public void initializeHostGameBoard() {
+
+        /* Set the black player (2) moves */
+//        for (int row = 0; row < 3; row++) {
+//            for (int col = 0; col < 8; col++) {
+//                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
+//                    model.addPiecePlayerTwo(new Piece(row, col, false, Color.BLACK));
+//                }
+//            }
+//        }
+//
+//        /* Set the red player (1) moves */
+//        for (int row = 5; row < 8; row++) {
+//            for (int col = 0; col < 8; col++) {
+//                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
+//                    model.addPiecePlayerOne(new Piece(row, col, true, Color.RED));
+//                }
+//            }
+//        }
+
+        model.addPiecePlayerTwo(new Piece(0, 1, false, Color.BLACK));
+        model.addPiecePlayerOne(new Piece(1, 4, true, Color.RED));
+    }
+
+    public void initializeClientGameBoard() {
+
+        model.addPiecePlayerTwo(new Piece(6, 3, false, Color.RED));
+        model.addPiecePlayerOne(new Piece(7, 6, true, Color.BLACK));
+
+//        /* Set the black player (2) moves */
+//        for (int row = 0; row < 3; row++) {
+//            for (int col = 0; col < 8; col++) {
+//                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
+//                    model.addPiecePlayerTwo(new Piece(row, col, false, Color.RED));
+//                }
+//            }
+//        }
+//
+//        /* Set the red player (1) moves */
+//        for (int row = 5; row < 8; row++) {
+//            for (int col = 0; col < 8; col++) {
+//                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
+//                    model.addPiecePlayerOne(new Piece(row, col, true, Color.BLACK));
+//                }
+//            }
+//        }
+    }
+
+
 }
 

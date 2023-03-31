@@ -1,5 +1,5 @@
 //import Game.GamePanelHost;
-import GameMVC.Game;
+import GameMVC.HostGame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,12 +14,14 @@ public class HostMenu extends JPanel {
     JFrame frame;
     JButton mainMenuButton = new JButton("Main Menu");
 
-    Game game;
+    HostGame hostGame;
 
     public HostMenu(JFrame frame) {
 
         this.frame = frame;
-        game = new Game();
+
+        /* Create the game object and set host to true */
+        hostGame = new HostGame(true);
 
         /* TextField for user to enter port Number they will connect to client with */
         JTextField portNumberTextField = new JTextField("Enter Port Number");
@@ -123,13 +125,13 @@ public class HostMenu extends JPanel {
             System.out.println("Client socket accepted in server");
 
             /* Send client socket to the HostGame object */
-            game.addClientSocket(clientSocket);
+            hostGame.addClientSocket(clientSocket);
 
             /* Create the thread to start messaging with the client */
-            game.startMessaging();
+            hostGame.startMessaging();
 
             this.frame.getContentPane().removeAll();
-            this.frame.getContentPane().add(game);
+            this.frame.getContentPane().add(hostGame);
             this.frame.revalidate();
             this.frame.repaint();
 

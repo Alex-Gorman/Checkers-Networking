@@ -31,7 +31,10 @@ public class GameModel {
     String messageToSend = "";
 
     public GameModel() {
-        currentState = State.FIRST_PRESS;
+        synchronized (this) {
+            currentState = State.FIRST_PRESS;
+        }
+//        currentState = State.FIRST_PRESS;
         numberOfClicks = 0;
         subs = new ArrayList<GameModelSubscriber>();
         playerOnePieces = new ArrayList<Piece>();
@@ -87,11 +90,50 @@ public class GameModel {
 
         /* If the piece is not a king */
         if (!p.king) {
-
-            if (row > 0 && col > 0) tilesPlayerCanMoveTo.add(tiles[row-1][col-1]);
-            if (row > 0 && col < 8) tilesPlayerCanMoveTo.add(tiles[row-1][col+1]);
+            if (row > 0 && col > 0 && !isOccupied(row-1, col-1)) tilesPlayerCanMoveTo.add(tiles[row-1][col-1]);
+            if (row > 0 && col < 7 && !isOccupied(row-1, col+1)) tilesPlayerCanMoveTo.add(tiles[row-1][col+1]);
         }
-        System.out.println(tilesPlayerCanMoveTo.size());
+        else {
+
+            /* 1 */
+            if (row == 0 && col == 7 && !isOccupied(row+1, col-1)) tilesPlayerCanMoveTo.add(tiles[row+1][col-1]);
+
+            /* 2 */
+            if (row == 0 && col < 7 && col > 0) {
+                if (!isOccupied(row+1, col-1)) tilesPlayerCanMoveTo.add(tiles[row+1][col-1]);
+                if (!isOccupied(row+1, col+1)) tilesPlayerCanMoveTo.add(tiles[row+1][col+1]);
+            }
+
+            /* 3 */
+            if (row == 7 && col == 0 && !isOccupied(row-1, col+1)) tilesPlayerCanMoveTo.add(tiles[row-1][col+1]);
+
+            /* 4 */
+            if (row == 7 && col < 7 && col > 0) {
+                if (!isOccupied(row-1, col-1)) tilesPlayerCanMoveTo.add(tiles[row-1][col-1]);
+                if (!isOccupied(row-1, col+1)) tilesPlayerCanMoveTo.add(tiles[row-1][col+1]);
+            }
+
+            /* 5 */
+            if (col == 7 && row < 7 && row > 0) {
+                if (!isOccupied(row+1, col-1)) tilesPlayerCanMoveTo.add(tiles[row+1][col-1]);
+                if (!isOccupied(row-1, col-1)) tilesPlayerCanMoveTo.add(tiles[row-1][col-1]);
+            }
+
+            /* 6 */
+            if (col == 0 && row < 7 && row > 0) {
+                if (!isOccupied(row+1, col+1)) tilesPlayerCanMoveTo.add(tiles[row+1][col+1]);
+                if (!isOccupied(row-1, col+1)) tilesPlayerCanMoveTo.add(tiles[row-1][col+1]);
+            }
+
+            /* 7 */
+            if (col < 7 && col > 0 && row < 7 && row > 0) {
+                if (!isOccupied(row+1, col+1)) tilesPlayerCanMoveTo.add(tiles[row+1][col+1]);
+                if (!isOccupied(row+1, col-1)) tilesPlayerCanMoveTo.add(tiles[row+1][col-1]);
+                if (!isOccupied(row-1, col+1)) tilesPlayerCanMoveTo.add(tiles[row-1][col+1]);
+                if (!isOccupied(row-1, col-1)) tilesPlayerCanMoveTo.add(tiles[row-1][col-1]);
+            }
+
+        }
     }
 
     public String createMoveString(int moveToRow, int moveToCol) {
@@ -113,6 +155,10 @@ public class GameModel {
         return messageToSend;
     }
 
+//    public Boolean canJump() {
+//
+//    }
+
     public void addTileClick(int row, int col) {
 
         switch (currentState) {
@@ -126,6 +172,8 @@ public class GameModel {
 
                 /* Show to player where the current piece can be moved to */
                 canMoveTo(row, col);
+
+                if (tilesPlayerCanMoveTo.size() == 0) return;
 
                 /* Save the location of the piece */
                 playerRow = row;
@@ -142,7 +190,7 @@ public class GameModel {
 
 
                 Boolean validMove = false;
-                System.out.println("validMove="+validMove);
+//                System.out.println("validMove="+validMove);
 
 
                 /* Check if the second button press is a valid move */
@@ -158,10 +206,16 @@ public class GameModel {
                 if (validMove) {
 
                     createMoveString(row, col);
+
+                    /* If the piece reaches the end of the board, then set to king */
+                    setIfKing(row, col, p);
+
                     p.row = row;
                     p.col = col;
+                    System.out.println("current state in model 1="+currentState);
                     currentState = State.OTHER_PLAYER;
-                    System.out.println("changed state");
+                    System.out.println("current state in model 2="+currentState);
+//                    System.out.println("changed state");
                 }
 
                 /* Re-assign these values to be nothing */
@@ -170,9 +224,14 @@ public class GameModel {
 
                 /* Remove all tiles player can move to */
                 tilesPlayerCanMoveTo.removeAll(tilesPlayerCanMoveTo);
+//                currentState = State.FIRST_PRESS;
                 notifySubscribers();
             }
         }
+    }
+
+    public void setIfKing(int row, int col, Piece p) {
+        if (p.player && row == 0) p.setKing();
     }
 
     public State getCurrentState() {
@@ -180,13 +239,13 @@ public class GameModel {
     }
 
     public void takeIncomingMove(String incomingMoveMsg) {
-        System.out.println("incomingMoveMsg"+incomingMoveMsg);
+//        System.out.println("incomingMoveMsg"+incomingMoveMsg);
 
 //        String cleanMessage = incomingMoveMsg.replaceAll("->", "");
 //        System.out.println("cleanMessage"+cleanMessage);
 
         String[] numbers = incomingMoveMsg.split(",");
-        System.out.println("numbers array"+ Arrays.toString(numbers));
+//        System.out.println("numbers array"+ Arrays.toString(numbers));
         int rowPrev = Integer.parseInt(numbers[0]);
         int colPrev = Integer.parseInt(numbers[1]);
         int rowCur = Integer.parseInt(numbers[2]);
@@ -198,13 +257,24 @@ public class GameModel {
                 p.row = rowCur;
                 p.col = colCur;
                 tiles[rowCur][colCur].piece = p;
+
+                /* If the piece makes it to the last row, then set it to a king */
+                if (p.row == 7) p.setKing();
                 break;
             }
         }
         notifySubscribers();
     }
 
+//    public Boolean canJump() {
+//
+//    }
+
     public void setPlayerStateToTheirTurn() {
         currentState = State.FIRST_PRESS;
+    }
+
+    public void setPlayerStateToOtherPlayerTurn() {
+        currentState = State.OTHER_PLAYER;
     }
 }

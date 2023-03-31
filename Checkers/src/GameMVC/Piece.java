@@ -25,4 +25,8 @@ public class Piece {
         this.row = row;
         this.col = col;
     }
+
+    public Boolean isKing() {
+        return king;
+    }
 }

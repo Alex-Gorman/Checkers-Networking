@@ -1,4 +1,8 @@
-package GameClientMVC;
+package GameMVC;
+
+import GameMVC.GameController;
+import GameMVC.GameModel;
+import GameMVC.GameView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,22 +15,23 @@ public class ClientGame extends JPanel {
 
     Socket socket;
 
-    ClientGameModel clientGameModel;
+    GameModel gameModel;
     public ClientGame() {
 
         /* MVC Setup */
-        ClientGameView clientGameView = new ClientGameView();
-        clientGameModel = new ClientGameModel();
-        ClientGameController clientGameController = new ClientGameController();
-        clientGameView.setModel(clientGameModel);
-        clientGameView.setController(clientGameController);
-        clientGameController.setModel(clientGameModel);
-        clientGameModel.addSubscriber(clientGameView);
+        GameView gameView = new GameView(false);
+        gameModel = new GameModel();
+        GameController gameController = new GameController();
+        gameView.setModel(gameModel);
+        gameView.setController(gameController);
+        gameController.setModel(gameModel);
+        gameModel.addSubscriber(gameView);
 
-        clientGameView.initializeBoardChips();
-
-        clientGameView.setPreferredSize(new Dimension(600, 600));
-        this.add(clientGameView);
+        gameView.initializeBoardChips();
+        gameModel.setPlayerStateToOtherPlayerTurn();
+;
+        gameView.setPreferredSize(new Dimension(600, 600));
+        this.add(gameView);
     }
 
     public void addSocket(Socket fd) {
@@ -34,7 +39,7 @@ public class ClientGame extends JPanel {
     }
 
     public void startMessaging() {
-        Thread thread = new Thread(new ClientGame.MyRunnable());
+        Thread thread = new Thread(new MyRunnable());
         thread.start();
     }
 
@@ -50,9 +55,12 @@ public class ClientGame extends JPanel {
                 byte[] buffer = new byte[1024];
                 int numBytes;
                 String s = "";
+                int count = 0;
 
                 while (true) {
-                    Thread.sleep(5000);
+//                    Thread.sleep(5000);
+
+                    if (inputStream.available() <= 0) continue;
 
                     System.out.println("GOT HERE CLIENT GAME 1");
                     numBytes = inputStream.read(buffer);
@@ -62,25 +70,29 @@ public class ClientGame extends JPanel {
 
                     String message = new String(buffer, 0, numBytes);
                     System.out.println(message);
-                    if (!message.equals("")) clientGameModel.takeIncomingMove(message);
+                    if (!message.equals("")) gameModel.takeIncomingMove(message);
 
-                    clientGameModel.setPlayerStateToTheirTurn();
+                    gameModel.setPlayerStateToTheirTurn();
+                    System.out.println("set turn to host");
 
-                    while (clientGameModel.getCurrentState() != ClientGameModel.State.OTHER_PLAYER) {
-
+                    while (gameModel.getCurrentState() != GameModel.State.OTHER_PLAYER) {
+//                        System.out.println("current state = other player");
+//                        count++;
+                        Thread.sleep(100);
                     }
 
                     System.out.println("Message sent to host");
 
-                    s = clientGameModel.getMessageToSend();
+                    s = gameModel.getMessageToSend();
                     outputStream.write(s.getBytes());
 
-                    clientGameModel.clearMessageToSendString();
+                    gameModel.clearMessageToSendString();
                 }
 
             } catch (IOException e) {
                 e.printStackTrace();
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
             System.out.println("Broke out of loop, buffer == -1");

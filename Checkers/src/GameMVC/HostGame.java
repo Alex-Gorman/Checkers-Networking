@@ -1,9 +1,5 @@
 package GameMVC;
 
-import GameMVC.GameController;
-import GameMVC.GameModel;
-import GameMVC.GameView;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -11,16 +7,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-public class Game extends JPanel {
+public class HostGame extends JPanel {
 
     Socket clientSocket;
 
     GameModel gameModel;
 
-    public Game() {
+    public HostGame(Boolean host) {
 
         /* MVC Setup */
-        GameView gameView = new GameView();
+        GameView gameView = new GameView(host);
         gameModel = new GameModel();
         GameController gameController = new GameController();
         gameView.setModel(gameModel);
@@ -48,7 +44,6 @@ public class Game extends JPanel {
         @Override
         public void run() {
             try {
-                System.out.println("got to run()");
                 InputStream inputStream = clientSocket.getInputStream();
                 OutputStream outputStream = clientSocket.getOutputStream();
 
@@ -57,25 +52,30 @@ public class Game extends JPanel {
                 String s = "";
 
                 while (true) {
-                    Thread.sleep(5000);
+                    Thread.sleep(100);
+                    System.out.println(gameModel.getCurrentState());
                     if (gameModel.getCurrentState() != GameModel.State.OTHER_PLAYER) {
-                        continue;
+                        ;
+                        Thread.sleep(100);
                     }
-                    System.out.println("GOT HERE HOST GAME 1");
-                    s = gameModel.getMessageToSend();
-                    System.out.println("msg to send"+s);
-                    outputStream.write(s.getBytes());
-                    gameModel.clearMessageToSendString();
+                    else {
+                        System.out.println("GOT HERE HOST GAME 1");
+                        s = gameModel.getMessageToSend();
+                        System.out.println("msg to send"+s);
+                        outputStream.write(s.getBytes());
+                        gameModel.clearMessageToSendString();
 
-                    numBytes = inputStream.read(buffer);
-                    String message = new String(buffer, 0, numBytes);
+                        numBytes = inputStream.read(buffer);
+                        String message = new String(buffer, 0, numBytes);
 
-                    System.out.println("Message Received from client");
+                        System.out.println("Message Received from client");
 
-                    gameModel.takeIncomingMove(message);
+                        gameModel.takeIncomingMove(message);
 
-                    /* Set the player state to FIRST_PRESS */
-                    gameModel.setPlayerStateToTheirTurn();
+                        /* Set the player state to FIRST_PRESS */
+                        gameModel.setPlayerStateToTheirTurn();
+                    }
+
                 }
 
             } catch (IOException e) {
@@ -83,6 +83,9 @@ public class Game extends JPanel {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+//            catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
         }
     }
 }
