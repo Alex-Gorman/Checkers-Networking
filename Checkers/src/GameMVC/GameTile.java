@@ -1,8 +1,5 @@
 package GameMVC;
 
-import GameMVC.GameView;
-import GameMVC.Piece;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,11 +11,11 @@ public class GameTile extends JButton {
     int row, col;
     Piece piece;
 
-    GameView hostGameView;
+    GameView gameView;
 
     Color originalColor;
 
-    public GameTile(int row, int col, GameView hostGameView) {
+    public GameTile(int row, int col, GameView gameView) {
 
         /* Set the row and col index */
         this.row = row;
@@ -37,13 +34,13 @@ public class GameTile extends JButton {
         this.setEnabled(true);
 
         /* Set the GameView object */
-        this.hostGameView = hostGameView;
+        this.gameView = gameView;
 
         /* Add an actionListener to the button */
         this.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 /* Send coordinates of tile pressed to the GameView object to handle it */
-                hostGameView.takeButtonData(e, row, col);
+                gameView.takeButtonData(e, row, col);
             }
         });
     }
@@ -58,6 +55,7 @@ public class GameTile extends JButton {
         }
         else {
             ImageIcon icon = new ImageIcon(createCircleKingImage(p.color));
+//            ImageIcon icon = new ImageIcon(createCircleImage(Color.PINK));
             this.setIcon(icon);
         }
     }

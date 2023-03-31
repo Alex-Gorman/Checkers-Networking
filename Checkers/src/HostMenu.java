@@ -12,7 +12,7 @@ public class HostMenu extends JPanel {
 
     JPanel mainMenu;
     JFrame frame;
-    JButton mainMenuButton = new JButton("Main Menu");
+    JButton mainMenuButton;
 
     HostGame hostGame;
 
@@ -25,6 +25,11 @@ public class HostMenu extends JPanel {
 
         /* TextField for user to enter port Number they will connect to client with */
         JTextField portNumberTextField = new JTextField("Enter Port Number");
+
+        /* Button to go back to main menu */
+        mainMenuButton = new JButton("Main Menu");
+        mainMenuButton.setPreferredSize(new Dimension(350, 100));
+        mainMenuButton.setFont(new Font("",Font.PLAIN,20));
 
         /* Once the user clicks to add text into the port number text field,
         the pre-written text will disappear */
@@ -58,6 +63,9 @@ public class HostMenu extends JPanel {
         /* Connect Button that the user will press once they have entered their info to try
         and connect with the client user */
         JButton connectButton = new JButton("Connect");
+        connectButton.setFont(new Font("",Font.PLAIN,20));
+        connectButton.setBackground(Color.GREEN);
+        connectButton.setPreferredSize(new Dimension(350, 100));
 
         /* Leo, please add comments here to explain what you did */
         GridBagLayout layout = new GridBagLayout();
@@ -65,7 +73,7 @@ public class HostMenu extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
 
         /* Leo, please add comments here to explain what you did */
-        gbc.insets = new Insets(3,3,3,3);
+        gbc.insets = new Insets(10,10,10,10);
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -85,7 +93,6 @@ public class HostMenu extends JPanel {
                 throw new RuntimeException(ex);
             }
         });
-        connectButton.setBackground(Color.GREEN);
 
         /* Leo, please add comments here to explain what you did */
         gbc.gridx=0;

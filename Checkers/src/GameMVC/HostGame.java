@@ -53,13 +53,13 @@ public class HostGame extends JPanel {
 
                 while (true) {
                     Thread.sleep(100);
-                    System.out.println(gameModel.getCurrentState());
+//                    System.out.println(gameModel.getCurrentState());
                     if (gameModel.getCurrentState() != GameModel.State.OTHER_PLAYER) {
                         ;
                         Thread.sleep(100);
                     }
                     else {
-                        System.out.println("GOT HERE HOST GAME 1");
+//                        System.out.println("GOT HERE HOST GAME 1");
                         s = gameModel.getMessageToSend();
                         System.out.println("msg to send"+s);
                         outputStream.write(s.getBytes());
@@ -68,9 +68,12 @@ public class HostGame extends JPanel {
                         numBytes = inputStream.read(buffer);
                         String message = new String(buffer, 0, numBytes);
 
-                        System.out.println("Message Received from client");
+//                        System.out.println("Message Received from client");
 
                         gameModel.takeIncomingMove(message);
+
+
+//                        gameModel.canJump();
 
                         /* Set the player state to FIRST_PRESS */
                         gameModel.setPlayerStateToTheirTurn();

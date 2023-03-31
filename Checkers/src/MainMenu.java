@@ -8,6 +8,8 @@ public class MainMenu extends JPanel {
 
     public MainMenu(JFrame frame, JPanel HostPanel, JPanel AwayPanel) {
 
+//        this.setBackground(Color.BLUE);
+
         /* Button to enter screen where user can host a game */
         JButton hostGameButton = new JButton("Host A Game");
 
@@ -52,14 +54,24 @@ public class MainMenu extends JPanel {
 
 
         });
-        try{
-            myHostAddr = new JLabel(String.valueOf(InetAddress.getLocalHost()).split("/")[1], SwingConstants.CENTER);
+        try {
+            myHostAddr = new JLabel("My IP Address: \n"+String.valueOf(InetAddress.getLocalHost()).split("/")[1], SwingConstants.CENTER);
+
+            /* make the label opaque so that its background colour is visible */
+            myHostAddr.setOpaque(true);
+
+            /* set the background colour of the label to blue */
+            myHostAddr.setBackground(new Color(51, 255, 249 ));
+
+            /* Set a black border with a thickness of 2 pixels */
+            myHostAddr.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+
             gbc.gridx = 0;
             gbc.gridy = 2;
             gbc.gridwidth=2;
             myHostAddr.setFont(new Font("",Font.BOLD,20));
             this.add(myHostAddr,gbc);
-        }catch (Exception ignored){
+        } catch (Exception ignored){
         }
     }
 }

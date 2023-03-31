@@ -100,14 +100,33 @@ public class GameView extends Panel implements GameModelSubscriber {
 //            }
 //        }
 
-        model.addPiecePlayerTwo(new Piece(0, 1, false, Color.BLACK));
-        model.addPiecePlayerOne(new Piece(1, 4, true, Color.RED));
+
+
+
+//        model.addPiecePlayerTwo(new Piece(6, 2, false, Color.BLACK));
+//        model.addPiecePlayerOne(new Piece(7, 1, true, Color.RED));
+
+//        model.addPiecePlayerTwo(new Piece(6, 1, false, Color.BLACK));
+//        model.addPiecePlayerOne(new Piece(7, 2, true, Color.RED));
+
+        model.addPiecePlayerTwo(new Piece(0, 3, false, Color.BLACK));
+        model.addPiecePlayerOne(new Piece(3, 6, true, Color.RED));
+        model.addPiecePlayerTwo(new Piece(6, 5, false, Color.BLACK));
     }
 
     public void initializeClientGameBoard() {
 
-        model.addPiecePlayerTwo(new Piece(6, 3, false, Color.RED));
-        model.addPiecePlayerOne(new Piece(7, 6, true, Color.BLACK));
+//        model.addPiecePlayerTwo(new Piece(0, 6, false, Color.RED));
+//        model.addPiecePlayerOne(new Piece(1, 5, true, Color.BLACK));
+
+//        model.addPiecePlayerTwo(new Piece(0, 5, false, Color.RED));
+//        model.addPiecePlayerOne(new Piece(1, 6, true, Color.BLACK));
+
+        model.addPiecePlayerTwo(new Piece(4, 1, false, Color.RED));
+        model.addPiecePlayerOne(new Piece(7, 4, true, Color.BLACK));
+        model.addPiecePlayerOne(new Piece(1, 2, true, Color.BLACK));
+
+
 
 //        /* Set the black player (2) moves */
 //        for (int row = 0; row < 3; row++) {
