@@ -1,5 +1,7 @@
 package GameMVC;
 
+import java.io.DataOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 
 public class GameModel {
@@ -25,6 +27,9 @@ public class GameModel {
 
     String messageToSend = "";
 
+    Socket socket;
+
+    static DataOutputStream dout;
     public GameModel() {
         synchronized (this) {
             currentState = State.FIRST_PRESS;
@@ -505,5 +510,24 @@ public class GameModel {
 
     public void setPlayerStateToOtherPlayerTurn() {
         currentState = State.OTHER_PLAYER;
+    }
+
+    // Leo
+    public void addSocket(Socket socket){
+        this.socket = socket;
+        try {
+            dout = new DataOutputStream(socket.getOutputStream());
+        }catch (Exception e){
+
+        }
+    }
+    public void sendMessage(String msg){
+        String out = msg;
+        try {
+            dout.writeUTF(out);
+
+        }catch (Exception e){}
+
+        notifySubscribers();
     }
 }

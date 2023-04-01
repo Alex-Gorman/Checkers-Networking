@@ -18,4 +18,9 @@ public class GameController {
     public void handleTileClick(ActionEvent e, int row, int col) {
         gameModel.addTileClick(row, col);
     }
+
+    // Leo Add
+    public void handleSend(ActionEvent e, String msg){
+        gameModel.sendMessage(msg);
+    }
 }
