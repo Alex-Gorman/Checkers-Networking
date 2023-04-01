@@ -1,17 +1,10 @@
 package GameMVC;
 
-import GameMVC.GameModelSubscriber;
-import GameMVC.GameTile;
-import GameMVC.Piece;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class GameModel {
 
     enum State {FIRST_PRESS, SECOND_PRESS, OTHER_PLAYER}
-
-//    enum MsgState {MSG_NOT_READY, MSG_NOT_SENT}
 
     State currentState;
 
@@ -24,6 +17,8 @@ public class GameModel {
     GameTile[][] tiles = new GameTile[8][8];
 
     ArrayList<GameTile> tilesPlayerCanMoveTo = new ArrayList<>();
+
+    ArrayList<GameTile> tilesOfPiecesThatCanJump = new ArrayList<>();
 
     /* Variables to store player location for chip being moved */
     int playerRow, playerCol;
@@ -67,22 +62,28 @@ public class GameModel {
         subs.forEach(GameModelSubscriber::modelUpdated);
     }
 
+    /* Get all the tiles of the game board */
     public GameTile[][] getTiles() {
         return tiles;
     }
 
+    /* Get the tiles a player can move to */
     public ArrayList<GameTile> getTilesPlayerCanMoveTo() {
         return tilesPlayerCanMoveTo;
     }
 
+    /* Check to see if given row and col of board are occupied by any player */
     public Boolean isOccupied(int row, int col) {
         return (tiles[row][col].piece != null);
     }
 
+    /* Check to see if given row and col of board are occupied by another player */
     public Boolean isOccupiedByOtherPlayer(int row, int col) {
         return (tiles[row][col].piece != null && tiles[row][col].piece.player == false);
     }
 
+
+    /* Update the array of the tiles that the player can move to */
     public void canMoveTo(int row, int col) {
         Piece p = tiles[row][col].piece;
 
@@ -136,6 +137,7 @@ public class GameModel {
         }
     }
 
+    /* Create the string of moves to send to the other player */
     public String createMoveString(int moveToRow, int moveToCol) {
         messageToSend += String.valueOf(7-playerRow);
         messageToSend += ",";
@@ -155,8 +157,11 @@ public class GameModel {
         return messageToSend;
     }
 
+    /* Return true if there are tiles the player can jump to (jump over other player piece) */
     public Boolean canJump() {
+        tilesPlayerCanMoveTo.remove(tilesPlayerCanMoveTo);
         Boolean jumpPossible = false;
+        tilesOfPiecesThatCanJump.removeAll(tilesOfPiecesThatCanJump);
 
         /* Check all player one pieces to see if you can capture player two piece */
         for (Piece p: playerOnePieces) {
@@ -173,6 +178,7 @@ public class GameModel {
             if (checkCol >= 6 && checkRow >= 2) {
                 if (isOccupiedByOtherPlayer(checkRow-1, checkCol-1) && !isOccupied(checkRow-2, checkCol-2)) {
                     tilesPlayerCanMoveTo.add(tiles[checkRow-2][checkCol-2]);
+                    tilesOfPiecesThatCanJump.add(tiles[checkRow][checkCol]);
                     jumpPossible = true;
                 }
             }
@@ -234,12 +240,37 @@ public class GameModel {
         return jumpPossible;
     }
 
+    public void resetTilesPlayerCanMoveTo() {
+        tilesPlayerCanMoveTo.removeAll(tilesPlayerCanMoveTo);
+    }
+
+    public void removePieceFromPlayer2(int row, int col) {
+        for (Piece pToDelete: playerTwoPieces) {
+            if (pToDelete.row == row && pToDelete.col == col) {
+                playerTwoPieces.remove(pToDelete);
+                break;
+            }
+        }
+    }
+
+    public void removePieceFromPlayer1(int row, int col) {
+        for (Piece pToDelete: playerOnePieces) {
+            if (pToDelete.row == row && pToDelete.col == col) {
+                playerOnePieces.remove(pToDelete);
+                break;
+            }
+        }
+    }
+
     public void addTileClick(int row, int col) {
 
         switch (currentState) {
             case FIRST_PRESS -> {
 
+                /* Check if you can jump another piece */
                 if (canJump()) {
+
+                    /* Set the state to second press */
                     currentState = State.SECOND_PRESS;
 
                     /* Save the location of the piece */
@@ -259,6 +290,7 @@ public class GameModel {
                 /* Show to player where the current piece can be moved to */
                 canMoveTo(row, col);
 
+                /* If no tiles player can move to then just return and try again */
                 if (tilesPlayerCanMoveTo.size() == 0) return;
 
                 /* Save the location of the piece */
@@ -276,8 +308,6 @@ public class GameModel {
 
 
                 Boolean validMove = false;
-//                System.out.println("validMove="+validMove);
-
 
                 /* Check if the second button press is a valid move */
                 for (GameTile gameTile : tilesPlayerCanMoveTo) {
@@ -285,7 +315,6 @@ public class GameModel {
                         validMove = true;
                     }
                 }
-                System.out.println("validMove="+validMove);
 
                 if (!validMove) {
                     /* Re-assign these values to be nothing */
@@ -293,11 +322,12 @@ public class GameModel {
                     playerCol = -1;
 
                     /* Remove all tiles player can move to */
-                    tilesPlayerCanMoveTo.removeAll(tilesPlayerCanMoveTo);
+                    resetTilesPlayerCanMoveTo();
 
                     /* Re-assign state to first press */
                     currentState = State.FIRST_PRESS;
 
+                    /* Update game board */
                     notifySubscribers();
                 }
 
@@ -315,13 +345,6 @@ public class GameModel {
                     int colToDelete = -1;
                     int rowToDelete = -1;
                     if ((Math.abs(row-playerRow))>=2 || (Math.abs(col-playerCol))>=2) {
-                        System.out.println("got here math abs");
-
-                        System.out.println("row1 = "+playerRow);
-                        System.out.println("col1 = "+playerCol);
-                        System.out.println("row2 = "+row);
-                        System.out.println("col2 = "+col);
-
 
                         if (row < playerRow) {
                             rowToDelete = row + 1;
@@ -339,32 +362,15 @@ public class GameModel {
                                 colToDelete = col + 1;
                             }
                         }
-
-                        System.out.println("row to delete"+rowToDelete);
-                        System.out.println("col to delete"+colToDelete);
-
-
-
                         /* Remove the player you jumped over */
-                        for (Piece pToDelete: playerTwoPieces) {
-                            if (pToDelete.row == rowToDelete && pToDelete.col == colToDelete) {
-                                System.out.println(pToDelete.row);
-                                System.out.println(pToDelete.col);
-                                playerTwoPieces.remove(pToDelete);
-                                break;
-                            }
-                        }
+                        removePieceFromPlayer2(rowToDelete, colToDelete);
                     }
-
 
                     /* Update the piece row and col to new values */
                     p.row = row;
                     p.col = col;
 
-                    System.out.println("current state in model 1="+currentState);
                     currentState = State.OTHER_PLAYER;
-                    System.out.println("current state in model 2="+currentState);
-//                    System.out.println("changed state");
                 }
 
                 /* Re-assign these values to be nothing */
@@ -373,7 +379,6 @@ public class GameModel {
 
                 /* Remove all tiles player can move to */
                 tilesPlayerCanMoveTo.removeAll(tilesPlayerCanMoveTo);
-//                currentState = State.FIRST_PRESS;
                 notifySubscribers();
             }
         }
@@ -394,16 +399,8 @@ public class GameModel {
         int rowCur = Integer.parseInt(numbers[2]);
         int colCur = Integer.parseInt(numbers[3]);
 
-        System.out.println("got here into takeIncomingMove");
-
-        for (Piece p: playerTwoPieces) {
-            System.out.println(p.row);
-            System.out.println(p.col);
-        }
-
         for (Piece p: playerTwoPieces) {
             if (p.row == rowPrev && p.col == colPrev) {
-                System.out.println("found piece in takeIncomingMove");
                 tiles[rowPrev][colPrev].piece = null;
                 p.row = rowCur;
                 p.col = colCur;
@@ -414,57 +411,24 @@ public class GameModel {
                 int colToDelete = -1;
                 int rowToDelete = -1;
                 if ((Math.abs(rowPrev - rowCur))>=2 || (Math.abs(colPrev - colCur))>=2) {
-                    if (!p.isKing()) {
-                        if (rowCur > rowPrev) {
-                            rowToDelete = rowCur - 1;
-                            if (colCur > colPrev) colToDelete = colCur - 1;
-                            else colToDelete = colCur + 1;
+                    if (rowCur > rowPrev) {
+                        rowToDelete = rowCur - 1;
+                        if (colCur > colPrev) colToDelete = colCur - 1;
+                        else colToDelete = colCur + 1;
 
-                            System.out.println("row to delete = "+rowToDelete);
-                            System.out.println("col to delete = "+colToDelete);
+                        /* Remove the player you jumped over */
+                        removePieceFromPlayer1(rowToDelete, colToDelete);
 
-                            /* Remove the player you jumped over */
-                            for (Piece pToDelete: playerOnePieces) {
-                                if (pToDelete.row == rowToDelete && pToDelete.col == colToDelete) {
-                                    System.out.println(pToDelete.row);
-                                    System.out.println(pToDelete.col);
-                                    playerOnePieces.remove(pToDelete);
-                                    break;
-                                }
-                            }
-                        }
-                    } else {
-                        if (rowCur > rowPrev) {
-                            rowToDelete = rowCur + 1;
-                            if (colCur > colPrev) colToDelete = colCur - 1;
-                            else colToDelete = colCur + 1;
+                    }
 
-                            System.out.println("row to delete = "+rowToDelete);
-                            System.out.println("col to delete = "+colToDelete);
-
-                            /* Remove the player you jumped over */
-                            for (Piece pToDelete: playerOnePieces) {
-                                if (pToDelete.row == rowToDelete && pToDelete.col == colToDelete) {
-                                    System.out.println(pToDelete.row);
-                                    System.out.println(pToDelete.col);
-                                    playerOnePieces.remove(pToDelete);
-                                    break;
-                                }
-                            }
-                        } else if (rowPrev > rowCur) {
+                    if (p.isKing()) {
+                        if (rowPrev > rowCur) {
                             rowToDelete = rowCur + 1;
                             if (colCur > colPrev) colToDelete = colCur - 1;
                             else colToDelete = colCur + 1;
 
                             /* Remove the player you jumped over */
-                            for (Piece pToDelete: playerOnePieces) {
-                                if (pToDelete.row == rowToDelete && pToDelete.col == colToDelete) {
-                                    System.out.println(pToDelete.row);
-                                    System.out.println(pToDelete.col);
-                                    playerOnePieces.remove(pToDelete);
-                                    break;
-                                }
-                            }
+                            removePieceFromPlayer1(rowToDelete, colToDelete);
                         }
                     }
                 }
@@ -472,7 +436,6 @@ public class GameModel {
                 /* If the piece makes it to the last row, then set it to a king */
                 if (p.row == 7) {
                     p.setKing();
-                    System.out.println("king me");
                 }
                 break;
             }
