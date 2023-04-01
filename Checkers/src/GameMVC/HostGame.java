@@ -73,10 +73,10 @@ public class HostGame extends JPanel {
                         gameModel.takeIncomingMove(message);
 
 
-//                        gameModel.canJump();
+                        gameModel.canJump();
 
                         /* Set the player state to FIRST_PRESS */
-                        gameModel.setPlayerStateToTheirTurn();
+//                        gameModel.setPlayerStateToTheirTurn();
                     }
 
                 }

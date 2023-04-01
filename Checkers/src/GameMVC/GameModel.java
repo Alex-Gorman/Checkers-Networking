@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class GameModel {
 
-    enum State {FIRST_PRESS, SECOND_PRESS, OTHER_PLAYER}
+    enum State {FIRST_PRESS, SECOND_PRESS, OTHER_PLAYER, CAN_JUMP}
 
     State currentState;
 
@@ -159,7 +159,7 @@ public class GameModel {
 
     /* Return true if there are tiles the player can jump to (jump over other player piece) */
     public Boolean canJump() {
-        tilesPlayerCanMoveTo.remove(tilesPlayerCanMoveTo);
+        tilesPlayerCanMoveTo.removeAll(tilesPlayerCanMoveTo);
         Boolean jumpPossible = false;
         tilesOfPiecesThatCanJump.removeAll(tilesOfPiecesThatCanJump);
 
@@ -187,6 +187,7 @@ public class GameModel {
             if (checkCol <= 1 && checkRow >= 2) {
                 if (isOccupiedByOtherPlayer(checkRow-1, checkCol+1) && !isOccupied(checkRow-2, checkCol+2)) {
                     tilesPlayerCanMoveTo.add(tiles[checkRow-2][checkCol+2]);
+                    tilesOfPiecesThatCanJump.add(tiles[checkRow][checkCol]);
                     jumpPossible = true;
                 }
             }
@@ -195,10 +196,12 @@ public class GameModel {
             if (checkCol >= 2 && checkCol <= 5 && checkRow >= 2) {
                 if (isOccupiedByOtherPlayer(checkRow-1, checkCol+1) && !isOccupied(checkRow-2, checkCol+2)) {
                     tilesPlayerCanMoveTo.add(tiles[checkRow-2][checkCol+2]);
+                    tilesOfPiecesThatCanJump.add(tiles[checkRow][checkCol]);
                     jumpPossible = true;
                 }
                 if (isOccupiedByOtherPlayer(checkRow-1, checkCol-1) && !isOccupied(checkRow-2, checkCol-2)) {
                     tilesPlayerCanMoveTo.add(tiles[checkRow-2][checkCol-2]);
+                    tilesOfPiecesThatCanJump.add(tiles[checkRow][checkCol]);
                     jumpPossible = true;
                 }
             }
@@ -212,6 +215,7 @@ public class GameModel {
                 if (checkRow <= 5 && checkCol <= 1) {
                     if (isOccupiedByOtherPlayer(checkRow+1, checkCol+1) && !isOccupied(checkRow+2, checkCol+2)) {
                         tilesPlayerCanMoveTo.add(tiles[checkRow+2][checkCol+2]);
+                        tilesOfPiecesThatCanJump.add(tiles[checkRow][checkCol]);
                         jumpPossible = true;
                     }
                 }
@@ -220,6 +224,7 @@ public class GameModel {
                 if (checkRow <= 5 && checkCol >= 6) {
                     if (isOccupiedByOtherPlayer(checkRow+1, checkCol-1) && !isOccupied(checkRow+2, checkCol-2)) {
                         tilesPlayerCanMoveTo.add(tiles[checkRow+2][checkCol-2]);
+                        tilesOfPiecesThatCanJump.add(tiles[checkRow][checkCol]);
                         jumpPossible = true;
                     }
                 }
@@ -228,20 +233,34 @@ public class GameModel {
                 if (checkRow <= 5 && checkCol <= 5 && checkCol >= 2) {
                     if (isOccupiedByOtherPlayer(checkRow+1, checkCol+1) && !isOccupied(checkRow+2, checkCol+2)) {
                         tilesPlayerCanMoveTo.add(tiles[checkRow+2][checkCol+2]);
+                        tilesOfPiecesThatCanJump.add(tiles[checkRow][checkCol]);
                         jumpPossible = true;
                     }
                     if (isOccupiedByOtherPlayer(checkRow+1, checkCol-1) && !isOccupied(checkRow+2, checkCol-2)) {
                         tilesPlayerCanMoveTo.add(tiles[checkRow+2][checkCol-2]);
+                        tilesOfPiecesThatCanJump.add(tiles[checkRow][checkCol]);
                         jumpPossible = true;
                     }
                 }
             }
         }
+        System.out.println("");
+        System.out.println("canJump() -> jumpPossible="+jumpPossible);
+        notifySubscribers();
+        if (jumpPossible) currentState = State.CAN_JUMP;
+        else currentState = State.FIRST_PRESS;
+        System.out.println("canJump() -> currentState="+currentState);
+        System.out.println("canJump() -> tilesPlayerCanMoveTo="+tilesPlayerCanMoveTo.size());
+        System.out.println("canJump() -> tilesOfPiecesThatCanJump="+tilesOfPiecesThatCanJump.size());
         return jumpPossible;
     }
 
     public void resetTilesPlayerCanMoveTo() {
         tilesPlayerCanMoveTo.removeAll(tilesPlayerCanMoveTo);
+    }
+
+    public void resetTilesOfPiecesThatCanJump() {
+        tilesOfPiecesThatCanJump.removeAll(tilesOfPiecesThatCanJump);
     }
 
     public void removePieceFromPlayer2(int row, int col) {
@@ -265,21 +284,42 @@ public class GameModel {
     public void addTileClick(int row, int col) {
 
         switch (currentState) {
+            case CAN_JUMP -> {
+                System.out.println("GOT TO CAN_JUMP");
+                Piece p = null;
+//                notifySubscribers();
+
+                for (GameTile tile: tilesOfPiecesThatCanJump) {
+                    if (tile.piece.row == row && tile.piece.col == col) {
+                        p = tile.piece;
+                        break;
+                    }
+                }
+
+                if (p == null) return;
+                else {
+                    playerRow = p.row;
+                    playerCol = p.col;
+                    currentState = State.SECOND_PRESS;
+                }
+
+            }
+
             case FIRST_PRESS -> {
 
-                /* Check if you can jump another piece */
-                if (canJump()) {
-
-                    /* Set the state to second press */
-                    currentState = State.SECOND_PRESS;
-
-                    /* Save the location of the piece */
-                    playerRow = row;
-                    playerCol = col;
-
-                    notifySubscribers();
-                    return;
-                }
+//                /* Check if you can jump another piece */
+//                if (canJump()) {
+//
+//                    /* Set the state to second press */
+//                    currentState = State.SECOND_PRESS;
+//
+//                    /* Save the location of the piece */
+//                    playerRow = row;
+//                    playerCol = col;
+//
+//                    notifySubscribers();
+//                    return;
+//                }
 
                 /* If the tile is occupied by the other player then don't register anything, don't move anything */
                 if (isOccupiedByOtherPlayer(row, col)) return;
@@ -303,8 +343,11 @@ public class GameModel {
             }
             case SECOND_PRESS -> {
 
+                System.out.println("SECOND_PRESS");
+
                 /* Get the piece of the first button press */
                 Piece p = tiles[playerRow][playerCol].piece;
+
 
 
                 Boolean validMove = false;
@@ -317,6 +360,8 @@ public class GameModel {
                 }
 
                 if (!validMove) {
+                    System.out.println("Invalid move");
+
                     /* Re-assign these values to be nothing */
                     playerRow = -1;
                     playerCol = -1;
@@ -324,16 +369,27 @@ public class GameModel {
                     /* Remove all tiles player can move to */
                     resetTilesPlayerCanMoveTo();
 
-                    /* Re-assign state to first press */
-                    currentState = State.FIRST_PRESS;
+                    /* Re-assign state */
+                    System.out.println("Size of tiles pieces that can jump array = "+tilesOfPiecesThatCanJump.size());
+                    if (tilesOfPiecesThatCanJump.size() != 0) {
+                        canJump();
+                        return ;
+                    }
+                    else  {
+                        currentState = State.FIRST_PRESS;
+                        /* Update game board */
+                        notifySubscribers();
+                    }
 
-                    /* Update game board */
-                    notifySubscribers();
+//                    /* Update game board */
+//                    notifySubscribers();
                 }
 
 
                 /* If valid move then re-assign row and col to piece */
                 if (validMove) {
+
+                    resetTilesOfPiecesThatCanJump();
 
                     /* Create the string of the move to send to the other player */
                     createMoveString(row, col);

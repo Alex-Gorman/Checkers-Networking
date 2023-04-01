@@ -56,6 +56,7 @@ public class GameView extends Panel implements GameModelSubscriber {
 
     @Override
     public void modelUpdated() {
+        System.out.println("modelUpdated");
 
         /* Clear all the piece from the board */
         for (int row = 0; row < 8; row++) {
@@ -77,28 +78,33 @@ public class GameView extends Panel implements GameModelSubscriber {
         });
 
         /* Tiles player can move to */
-        model.getTilesPlayerCanMoveTo().forEach(tile -> tile.setBackground(Color.ORANGE));
+        model.getTilesPlayerCanMoveTo().forEach(tile -> {
+            tile.setBackground(Color.ORANGE);
+            System.out.println("painted orange");
+        });
+
+        model.tilesOfPiecesThatCanJump.forEach(tile -> tile.setBackground(Color.cyan));
     }
 
     public void initializeHostGameBoard() {
 
         /* Set the black player (2) moves */
-//        for (int row = 0; row < 3; row++) {
-//            for (int col = 0; col < 8; col++) {
-//                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
-//                    model.addPiecePlayerTwo(new Piece(row, col, false, Color.BLACK));
-//                }
-//            }
-//        }
-//
-//        /* Set the red player (1) moves */
-//        for (int row = 5; row < 8; row++) {
-//            for (int col = 0; col < 8; col++) {
-//                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
-//                    model.addPiecePlayerOne(new Piece(row, col, true, Color.RED));
-//                }
-//            }
-//        }
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
+                    model.addPiecePlayerTwo(new Piece(row, col, false, Color.BLACK));
+                }
+            }
+        }
+
+        /* Set the red player (1) moves */
+        for (int row = 5; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
+                    model.addPiecePlayerOne(new Piece(row, col, true, Color.RED));
+                }
+            }
+        }
 
 
 
@@ -109,9 +115,10 @@ public class GameView extends Panel implements GameModelSubscriber {
 //        model.addPiecePlayerTwo(new Piece(6, 1, false, Color.BLACK));
 //        model.addPiecePlayerOne(new Piece(7, 2, true, Color.RED));
 
-        model.addPiecePlayerTwo(new Piece(0, 3, false, Color.BLACK));
-        model.addPiecePlayerOne(new Piece(3, 6, true, Color.RED));
-        model.addPiecePlayerTwo(new Piece(6, 5, false, Color.BLACK));
+        /* Test using this */
+//        model.addPiecePlayerTwo(new Piece(0, 3, false, Color.BLACK));
+//        model.addPiecePlayerOne(new Piece(3, 6, true, Color.RED));
+//        model.addPiecePlayerTwo(new Piece(6, 5, false, Color.BLACK));
     }
 
     public void initializeClientGameBoard() {
@@ -122,29 +129,30 @@ public class GameView extends Panel implements GameModelSubscriber {
 //        model.addPiecePlayerTwo(new Piece(0, 5, false, Color.RED));
 //        model.addPiecePlayerOne(new Piece(1, 6, true, Color.BLACK));
 
-        model.addPiecePlayerTwo(new Piece(4, 1, false, Color.RED));
-        model.addPiecePlayerOne(new Piece(7, 4, true, Color.BLACK));
-        model.addPiecePlayerOne(new Piece(1, 2, true, Color.BLACK));
+        /* Test using this */
+//        model.addPiecePlayerTwo(new Piece(4, 1, false, Color.RED));
+//        model.addPiecePlayerOne(new Piece(7, 4, true, Color.BLACK));
+//        model.addPiecePlayerOne(new Piece(1, 2, true, Color.BLACK));
 
 
 
-//        /* Set the black player (2) moves */
-//        for (int row = 0; row < 3; row++) {
-//            for (int col = 0; col < 8; col++) {
-//                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
-//                    model.addPiecePlayerTwo(new Piece(row, col, false, Color.RED));
-//                }
-//            }
-//        }
-//
-//        /* Set the red player (1) moves */
-//        for (int row = 5; row < 8; row++) {
-//            for (int col = 0; col < 8; col++) {
-//                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
-//                    model.addPiecePlayerOne(new Piece(row, col, true, Color.BLACK));
-//                }
-//            }
-//        }
+        /* Set the black player (2) moves */
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
+                    model.addPiecePlayerTwo(new Piece(row, col, false, Color.RED));
+                }
+            }
+        }
+
+        /* Set the red player (1) moves */
+        for (int row = 5; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
+                    model.addPiecePlayerOne(new Piece(row, col, true, Color.BLACK));
+                }
+            }
+        }
     }
 
 

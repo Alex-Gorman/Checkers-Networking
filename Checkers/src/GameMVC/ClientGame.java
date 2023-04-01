@@ -72,7 +72,8 @@ public class ClientGame extends JPanel {
                     System.out.println(message);
                     if (!message.equals("")) gameModel.takeIncomingMove(message);
 
-                    gameModel.setPlayerStateToTheirTurn();
+//                    gameModel.setPlayerStateToTheirTurn();
+                    gameModel.canJump();
                     System.out.println("set turn to host");
 
                     while (gameModel.getCurrentState() != GameModel.State.OTHER_PLAYER) {
