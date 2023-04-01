@@ -29,9 +29,29 @@ public class ClientGame extends JPanel {
 
         gameView.initializeBoardChips();
         gameModel.setPlayerStateToOtherPlayerTurn();
-;
+
         gameView.setPreferredSize(new Dimension(600, 600));
-        this.add(gameView);
+
+
+        ChatView chatView = new ChatView(false);
+        chatView.setModel(gameModel);
+        chatView.setController(gameController);
+        gameModel.addSubscriber(chatView);
+        chatView.setPreferredSize(new Dimension(600, 200));
+
+        GridBagLayout layout = new GridBagLayout();
+        this.setLayout(layout);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10,10,10,10);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        this.add(gameView,gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        this.add(chatView,gbc);
+
+        gameModel.addSocket(socket);
     }
 
     public void addSocket(Socket fd) {
@@ -43,6 +63,7 @@ public class ClientGame extends JPanel {
         thread.start();
     }
 
+    // need to change this thread, Only need ONE thread to handle all receive
     public class MyRunnable implements Runnable {
 
         @Override

@@ -67,7 +67,7 @@ public class HostMenu extends JPanel {
         connectButton.setBackground(Color.GREEN);
         connectButton.setPreferredSize(new Dimension(350, 100));
 
-        /* Leo, please add comments here to explain what you did */
+        /* Setup the GridBagLayout */
         GridBagLayout layout = new GridBagLayout();
         this.setLayout(layout);
         GridBagConstraints gbc = new GridBagConstraints();

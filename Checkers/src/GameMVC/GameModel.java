@@ -4,6 +4,8 @@ import GameMVC.GameModelSubscriber;
 import GameMVC.GameTile;
 import GameMVC.Piece;
 
+import java.io.DataOutputStream;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -14,6 +16,12 @@ public class GameModel {
 //    enum MsgState {MSG_NOT_READY, MSG_NOT_SENT}
 
     State currentState;
+
+    static DataOutputStream dout;
+
+    ArrayList<String> msgs = new ArrayList<>();
+
+    Socket socket;
 
     int numberOfClicks;
     ArrayList<GameModelSubscriber> subs;
@@ -82,6 +90,8 @@ public class GameModel {
     public Boolean isOccupiedByOtherPlayer(int row, int col) {
         return (tiles[row][col].piece != null && tiles[row][col].piece.player == false);
     }
+
+
 
     public void canMoveTo(int row, int col) {
         Piece p = tiles[row][col].piece;
@@ -486,5 +496,23 @@ public class GameModel {
 
     public void setPlayerStateToOtherPlayerTurn() {
         currentState = State.OTHER_PLAYER;
+    }
+
+    public void addSocket(Socket socket){
+        this.socket = socket;
+        try {
+            dout = new DataOutputStream(socket.getOutputStream());
+        }catch (Exception e){
+
+        }
+    }
+    public void sendMessage(String msg){
+        String out = msg;
+        try {
+            dout.writeUTF(out);
+
+        }catch (Exception e){}
+
+        notifySubscribers();
     }
 }
