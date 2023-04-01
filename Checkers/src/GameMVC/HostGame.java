@@ -27,7 +27,6 @@ public class HostGame extends JPanel {
         gameView.initializeBoardChips();
 
         gameView.setPreferredSize(new Dimension(600, 600));
-        this.add(gameView);
 
 
         ChatView chatView = new ChatView(false);

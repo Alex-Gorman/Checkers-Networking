@@ -38,7 +38,7 @@ public class ChatView extends JPanel implements GameModelSubscriber{
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
         );
-        panel.setBackground(Color.BLUE);
+//        panel.setBackground(Color.BLUE);
         scrollPane.setPreferredSize(new Dimension(600,100));
         scrollPane.setViewportView(panel);
 
