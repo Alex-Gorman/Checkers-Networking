@@ -18,6 +18,9 @@ public class GameView extends Panel implements GameModelSubscriber {
 
     Boolean host;
 
+    Color black = new Color(21,21,21,255);
+    Color white = new Color(225,220,185,255);
+
     public GameView(Boolean host) {
 
         this.host = host;
@@ -92,7 +95,7 @@ public class GameView extends Panel implements GameModelSubscriber {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 8; col++) {
                 if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
-                    model.addPiecePlayerTwo(new Piece(row, col, false, Color.BLACK));
+                    model.addPiecePlayerTwo(new Piece(row, col, false, white));
                 }
             }
         }
@@ -101,7 +104,7 @@ public class GameView extends Panel implements GameModelSubscriber {
         for (int row = 5; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
-                    model.addPiecePlayerOne(new Piece(row, col, true, Color.RED));
+                    model.addPiecePlayerOne(new Piece(row, col, true, black));
                 }
             }
         }
@@ -140,7 +143,7 @@ public class GameView extends Panel implements GameModelSubscriber {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 8; col++) {
                 if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
-                    model.addPiecePlayerTwo(new Piece(row, col, false, Color.RED));
+                    model.addPiecePlayerTwo(new Piece(row, col, false, black));
                 }
             }
         }
@@ -149,7 +152,7 @@ public class GameView extends Panel implements GameModelSubscriber {
         for (int row = 5; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
-                    model.addPiecePlayerOne(new Piece(row, col, true, Color.BLACK));
+                    model.addPiecePlayerOne(new Piece(row, col, true, white));
                 }
             }
         }

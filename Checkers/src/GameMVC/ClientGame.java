@@ -13,7 +13,7 @@ public class ClientGame extends JPanel {
 
         /* MVC Setup */
         GameView gameView = new GameView(false);
-        gameModel = new GameModel();
+        gameModel = new GameModel(false);
         GameController gameController = new GameController();
         gameView.setModel(gameModel);
         gameView.setController(gameController);
@@ -93,7 +93,10 @@ public class ClientGame extends JPanel {
                     }else if(msg.charAt(0) == '@'){
                         gameModel.receiveInitMessage(msg,false);
                     }else{
-                        gameModel.takeIncomingMove(msg);
+
+                        if (msg.length() <= 8) gameModel.takeIncomingMove(msg);
+                        else if (msg.length() >=8) gameModel.takeIncomingMultipleMove(msg);
+
                         gameModel.canJump();
 
                     }

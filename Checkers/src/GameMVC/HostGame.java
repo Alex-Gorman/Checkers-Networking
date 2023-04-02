@@ -15,7 +15,7 @@ public class HostGame extends JPanel {
 
         /* MVC Setup */
         GameView gameView = new GameView(host);
-        gameModel = new GameModel();
+        gameModel = new GameModel(true);
         GameController gameController = new GameController();
         gameView.setModel(gameModel);
         gameView.setController(gameController);
@@ -97,9 +97,9 @@ public class HostGame extends JPanel {
                             }else if (msg.charAt(0) == '@'){
                                 gameModel.receiveInitMessage(msg,true);
                             }else {
-                                gameModel.takeIncomingMove(msg);
+                                if (msg.length() <= 8) gameModel.takeIncomingMove(msg);
+                                else if (msg.length() >=8) gameModel.takeIncomingMultipleMove(msg);
                                 gameModel.canJump();
-
 
                             }
                         }

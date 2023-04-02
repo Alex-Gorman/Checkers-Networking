@@ -23,12 +23,13 @@ public class GameTile extends JButton {
 
         /* Set the color of the tile */
         if (!(row % 2 != 0 && col % 2 == 0 || row % 2 == 0 && col % 2 != 0)) {
-            Color customGreen = new Color(63, 171, 52);
-            this.setBackground(new Color(139,69,19));
-            originalColor = new Color(139,69,19);
+            Color lightBrown = new Color(227,193,111,255);
+            this.setBackground(lightBrown);
+            originalColor = lightBrown;
         } else {
-            this.setBackground(Color.WHITE);
-            originalColor = Color.WHITE;
+            Color darkBrown = new Color(184,139,74,255);
+            this.setBackground(darkBrown);
+            originalColor = darkBrown;
         }
         /* Set to true to enabled action on press */
         this.setEnabled(true);
