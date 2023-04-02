@@ -1,14 +1,7 @@
 package GameMVC;
-
-import GameMVC.GameController;
-import GameMVC.GameModel;
-import GameMVC.GameView;
-
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class ClientGame extends JPanel {
@@ -41,7 +34,7 @@ public class ClientGame extends JPanel {
         GridBagLayout layout = new GridBagLayout();
         this.setLayout(layout);
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10,10,10,10);
+        gbc.insets = new Insets(7,7,7,7);
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -51,11 +44,15 @@ public class ClientGame extends JPanel {
         this.add(chatView,gbc);
 
         gameModel.addSocket(socket);
+        gameModel.sendInitMessage(gameModel.clientName);
+
     }
 
     public void addSocket(Socket fd) {
         socket = fd;
     }
+
+    public void setClientUsername(String clientUsername){ gameModel.setClientName(clientUsername);}
 
     public void startMessaging() {
         Thread thread = new Thread(new MyRunnable());
@@ -67,54 +64,21 @@ public class ClientGame extends JPanel {
         @Override
         public void run() {
             try {
-                System.out.println("got to run()");
-                InputStream inputStream = socket.getInputStream();
-                OutputStream outputStream = socket.getOutputStream();
+                DataInputStream din = new DataInputStream(socket.getInputStream());
+                gameModel.setDataOutStream(new DataOutputStream(socket.getOutputStream()));
 
-                byte[] buffer = new byte[1024];
-                int numBytes;
-                String s = "";
-                int count = 0;
-
-                while (true) {
-//                    Thread.sleep(5000);
-
-                    if (inputStream.available() <= 0) continue;
-
-                    System.out.println("GOT HERE CLIENT GAME 1");
-                    numBytes = inputStream.read(buffer);
-                    System.out.println("GOT HERE HOST GAME 2");
-                    if (numBytes == -1) break;
-
-
-                    String message = new String(buffer, 0, numBytes);
-                    System.out.println(message);
-                    if (!message.equals("")) gameModel.takeIncomingMove(message);
-
-//                    gameModel.setPlayerStateToTheirTurn();
-                    gameModel.canJump();
-                    System.out.println("set turn to host");
-
-                    while (gameModel.getCurrentState() != GameModel.State.OTHER_PLAYER) {
-//                        System.out.println("current state = other player");
-//                        count++;
-                        Thread.sleep(100);
+                while(true) {
+                    String msg = din.readUTF();
+                    if (msg.charAt(0) == '*'){
+                        gameModel.receiveChatMessage(msg);
+                    }else if(msg.charAt(0) == '@'){
+                        gameModel.receiveInitMessage(msg,false);
                     }
-
-                    System.out.println("Message sent to host");
-
-                    s = gameModel.getMessageToSend();
-                    outputStream.write(s.getBytes());
-
-                    gameModel.clearMessageToSendString();
                 }
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+
             System.out.println("Broke out of loop, buffer == -1");
         }
     }

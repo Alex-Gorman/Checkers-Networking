@@ -1,14 +1,18 @@
 import GameMVC.ClientGame;
 
 import javax.swing.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.*;
 import java.net.Socket;
+import java.util.Objects;
 
 public class ClientMenu extends JPanel {
 
     JPanel mainPanel;
     JFrame frame;
     JButton mainMenuButton = new JButton("Main Menu");
+    JTextField userName = new JTextField("Enter Your Username");
 
     ClientGame clientGame;
     public ClientMenu(JFrame frame) {
@@ -21,7 +25,41 @@ public class ClientMenu extends JPanel {
         connect.setSize(150, 150);
         JTextField hostPortField = new JTextField("Enter Host Port Number");
         JTextField hostIpField = new JTextField("Enter Host IP Address");
-        JTextField userName = new JTextField("Enter Your Username");
+        hostPortField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                hostPortField.setText("");
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                /* Do nothing */
+            }
+        });
+
+        hostIpField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                hostIpField.setText("");
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                /* Do nothing */
+            }
+        });
+
+        userName.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                userName.setText("");
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                /* Do nothing */
+            }
+        });
         this.add(hostIpField);
         this.add(hostPortField);
         this.add(userName);
@@ -52,6 +90,10 @@ public class ClientMenu extends JPanel {
         Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
 
         clientGame.addSocket(socket);
+//        clientGame.setClientUsername(nameTextField.getText());
+        if (! Objects.equals(userName.getText(), "Enter Your Username")){
+            clientGame.setClientUsername(userName.getText());
+        }
 
         /* Create the thread to start messaging with the host */
         clientGame.startMessaging();

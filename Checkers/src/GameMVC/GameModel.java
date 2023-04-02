@@ -28,8 +28,14 @@ public class GameModel {
     String messageToSend = "";
 
     Socket socket;
-
+    ArrayList<String> chatMessage = new ArrayList<>();
     static DataOutputStream dout;
+
+    String hostName = "Player 1";
+    String clientName = "Player 2";
+    String chatPrefix = "*";
+    String initPrefix = "@";
+
     public GameModel() {
         synchronized (this) {
             currentState = State.FIRST_PRESS;
@@ -521,13 +527,60 @@ public class GameModel {
 
         }
     }
-    public void sendMessage(String msg){
-        String out = msg;
+
+    public void sendChatMessage(String msg, boolean isHost){
         try {
-            dout.writeUTF(out);
+            if (isHost){
+                this.chatMessage.add(hostName + ": " + msg);
+                dout.writeUTF(chatPrefix + hostName + ": " + msg);
+            }
+            else{
+                this.chatMessage.add(clientName + ": " + msg);
+                dout.writeUTF(chatPrefix + clientName + ": " + msg);
+            }
+        }catch (Exception e){
 
-        }catch (Exception e){}
-
+        }
         notifySubscribers();
+    }
+
+    public void sendInitMessage(String msg){
+        try {
+            dout.writeUTF(initPrefix + msg);
+        }catch (Exception e){
+
+        }
+    }
+
+    public void receiveChatMessage(String msg){
+        msg = msg.substring(1);
+        this.chatMessage.add(msg);
+        notifySubscribers();
+    }
+
+    public void receiveInitMessage(String msg, boolean isHost){
+        msg = msg.substring(1);
+        if (isHost){
+            setClientName(msg);
+        }else{
+            setHostName(msg);
+        }
+
+    }
+
+    public ArrayList<String> getChatMessage(){
+        return this.chatMessage;
+    }
+
+    public void setDataOutStream(DataOutputStream dout){
+        this.dout = dout;
+    }
+
+    public void setHostName(String hostName){
+        this.hostName = hostName;
+    }
+
+    public void setClientName(String clientName){
+        this.clientName = clientName;
     }
 }

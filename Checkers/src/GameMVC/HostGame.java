@@ -2,9 +2,7 @@ package GameMVC;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class HostGame extends JPanel {
@@ -27,7 +25,7 @@ public class HostGame extends JPanel {
         gameView.initializeBoardChips();
 
         gameView.setPreferredSize(new Dimension(600, 600));
-        ChatView chatView = new ChatView(false);
+        ChatView chatView = new ChatView(host);
         chatView.setModel(gameModel);
         chatView.setController(gameController);
         gameModel.addSubscriber(chatView);
@@ -36,7 +34,7 @@ public class HostGame extends JPanel {
         GridBagLayout layout = new GridBagLayout();
         this.setLayout(layout);
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10,10,10,10);
+        gbc.insets = new Insets(7,7,7,7);
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -46,11 +44,14 @@ public class HostGame extends JPanel {
         this.add(chatView,gbc);
 
         gameModel.addSocket(clientSocket);
+        gameModel.sendInitMessage(gameModel.hostName);
     }
 
     public void addClientSocket(Socket fd) {
         clientSocket = fd;
     }
+
+    public void setHostUsername(String hostUsername){ gameModel.setHostName(hostUsername);}
 
     public void startMessaging() {
         Thread thread = new Thread(new MyRunnable());
@@ -61,52 +62,24 @@ public class HostGame extends JPanel {
 
         @Override
         public void run() {
-            try {
-                InputStream inputStream = clientSocket.getInputStream();
-                OutputStream outputStream = clientSocket.getOutputStream();
+                try {
+                    while(true) {
+                        DataInputStream din = new DataInputStream(clientSocket.getInputStream());
+                        gameModel.setDataOutStream(new DataOutputStream(clientSocket.getOutputStream()));
 
-                byte[] buffer = new byte[1024];
-                int numBytes;
-                String s = "";
+                        while(true) {
+                            String msg = din.readUTF();
+                            if (msg.charAt(0) == '*'){
+                                gameModel.receiveChatMessage(msg);
+                            }else if (msg.charAt(0) == '@'){
+                                gameModel.receiveInitMessage(msg,true);
+                            }
+                        }
 
-                while (true) {
-                    Thread.sleep(100);
-//                    System.out.println(gameModel.getCurrentState());
-                    if (gameModel.getCurrentState() != GameModel.State.OTHER_PLAYER) {
-                        ;
-                        Thread.sleep(100);
                     }
-                    else {
-//                        System.out.println("GOT HERE HOST GAME 1");
-                        s = gameModel.getMessageToSend();
-                        System.out.println("msg to send"+s);
-                        outputStream.write(s.getBytes());
-                        gameModel.clearMessageToSendString();
-
-                        numBytes = inputStream.read(buffer);
-                        String message = new String(buffer, 0, numBytes);
-
-//                        System.out.println("Message Received from client");
-
-                        gameModel.takeIncomingMove(message);
-
-
-                        gameModel.canJump();
-
-                        /* Set the player state to FIRST_PRESS */
-//                        gameModel.setPlayerStateToTheirTurn();
-                    }
-
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-//            catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
         }
     }
 }

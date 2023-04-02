@@ -7,12 +7,15 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.net.*;
 import java.io.*;
+import java.util.Objects;
 
 public class HostMenu extends JPanel {
 
     JPanel mainMenu;
     JFrame frame;
     JButton mainMenuButton;
+
+    JTextField nameTextField = new JTextField("Enter Your Username");
 
     HostGame hostGame;
 
@@ -46,7 +49,6 @@ public class HostMenu extends JPanel {
         });
 
         /* TextField for user to enter their Name */
-        JTextField nameTextField = new JTextField("Enter Name");
 
         nameTextField.addFocusListener(new FocusListener() {
             @Override
@@ -133,6 +135,9 @@ public class HostMenu extends JPanel {
 
             /* Send client socket to the HostGame object */
             hostGame.addClientSocket(clientSocket);
+            if (! Objects.equals(nameTextField.getText(), "Enter Your Username")){
+                hostGame.setHostUsername(nameTextField.getText());
+            }
 
             /* Create the thread to start messaging with the client */
             hostGame.startMessaging();

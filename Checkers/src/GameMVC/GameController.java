@@ -1,7 +1,5 @@
 package GameMVC;
 
-import GameMVC.GameModel;
-
 import java.awt.event.ActionEvent;
 
 public class GameController {
@@ -20,7 +18,7 @@ public class GameController {
     }
 
     // Leo Add
-    public void handleSend(ActionEvent e, String msg){
-        gameModel.sendMessage(msg);
+    public void handleSend(ActionEvent e, String msg, Boolean isHost){
+        gameModel.sendChatMessage(msg, isHost);
     }
 }
