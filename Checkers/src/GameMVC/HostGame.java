@@ -25,11 +25,19 @@ public class HostGame extends JPanel {
         gameView.initializeBoardChips();
 
         gameView.setPreferredSize(new Dimension(600, 600));
+
+
         ChatView chatView = new ChatView(host);
         chatView.setModel(gameModel);
         chatView.setController(gameController);
         gameModel.addSubscriber(chatView);
-        chatView.setPreferredSize(new Dimension(600, 200));
+        chatView.setPreferredSize(new Dimension(300, 500));
+
+        ScoreBoard scoreBoard = new ScoreBoard();
+        scoreBoard.setModel(gameModel);
+        scoreBoard.setController(gameController);
+        gameModel.addSubscriber(scoreBoard);
+        scoreBoard.setPreferredSize(new Dimension(300, 100));
 
         GridBagLayout layout = new GridBagLayout();
         this.setLayout(layout);
@@ -37,11 +45,22 @@ public class HostGame extends JPanel {
         gbc.insets = new Insets(7,7,7,7);
         gbc.gridx = 0;
         gbc.gridy = 0;
+        gbc.gridheight = 2;
+        gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         this.add(gameView,gbc);
-        gbc.gridx = 0;
+        gbc.gridx = 2;
         gbc.gridy = 1;
+        gbc.gridheight = 1;
+        gbc.gridwidth = 1;
         this.add(chatView,gbc);
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.gridheight = 1;
+        gbc.gridwidth = 1;
+        this.add(scoreBoard,gbc);
+
+
 
         gameModel.addSocket(clientSocket);
         gameModel.sendInitMessage(gameModel.hostName);

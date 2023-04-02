@@ -24,8 +24,8 @@ public class GameTile extends JButton {
         /* Set the color of the tile */
         if (!(row % 2 != 0 && col % 2 == 0 || row % 2 == 0 && col % 2 != 0)) {
             Color customGreen = new Color(63, 171, 52);
-            this.setBackground(Color.GREEN);
-            originalColor = Color.GREEN;
+            this.setBackground(new Color(139,69,19));
+            originalColor = new Color(139,69,19);
         } else {
             this.setBackground(Color.WHITE);
             originalColor = Color.WHITE;

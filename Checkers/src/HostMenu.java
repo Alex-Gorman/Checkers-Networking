@@ -39,7 +39,9 @@ public class HostMenu extends JPanel {
         portNumberTextField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                portNumberTextField.setText("");
+                if (Objects.equals(portNumberTextField.getText(), "Enter Port Number")){
+                    portNumberTextField.setText("");
+                }
             }
 
             @Override
@@ -53,7 +55,10 @@ public class HostMenu extends JPanel {
         nameTextField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                nameTextField.setText("");
+
+                if (Objects.equals(nameTextField.getText(), "Enter Your Username")){
+                    nameTextField.setText("");
+                }
             }
 
             @Override

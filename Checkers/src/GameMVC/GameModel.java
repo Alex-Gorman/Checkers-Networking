@@ -36,6 +36,9 @@ public class GameModel {
     String chatPrefix = "*";
     String initPrefix = "@";
 
+    int player1Score = 0;
+    int player2Score = 0;
+
     public GameModel() {
         synchronized (this) {
             currentState = State.FIRST_PRESS;
