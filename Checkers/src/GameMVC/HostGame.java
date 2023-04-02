@@ -17,7 +17,7 @@ public class HostGame extends JPanel {
 
         /* MVC Setup */
         GameView gameView = new GameView(host);
-        gameModel = new GameModel();
+        gameModel = new GameModel(host);
         GameController gameController = new GameController();
         gameView.setModel(gameModel);
         gameView.setController(gameController);
@@ -70,7 +70,14 @@ public class HostGame extends JPanel {
 
 //                        System.out.println("Message Received from client");
 
-                        gameModel.takeIncomingMove(message);
+                        if (message.length() <= 8) {
+                            gameModel.takeIncomingMove(message);
+                            System.out.println("message less than 8");
+                        }
+                        else if (message.length() >= 8) {
+                            System.out.println("message greater than 8");
+                            gameModel.takeIncomingMultipleMove(message);
+                        }
 
 
                         gameModel.canJump();

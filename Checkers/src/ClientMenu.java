@@ -47,7 +47,8 @@ public class ClientMenu extends JPanel {
     }
 
     private void Connect() throws IOException {
-        String SERVER_ADDRESS = "127.0.1.1";
+//        String SERVER_ADDRESS = "127.0.1.1";
+        String SERVER_ADDRESS = "10.136.239.176";
         int SERVER_PORT = 30000;
         Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
 

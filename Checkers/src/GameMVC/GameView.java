@@ -106,6 +106,12 @@ public class GameView extends Panel implements GameModelSubscriber {
             }
         }
 
+//        model.addPiecePlayerOne(new Piece(5, 0, true, Color.RED));
+//        model.addPiecePlayerOne(new Piece(6, 1, true, Color.RED));
+//        model.addPiecePlayerOne(new Piece(6, 3, true, Color.RED));
+//        model.addPiecePlayerOne(new Piece(6, 5, true, Color.RED));
+//        model.addPiecePlayerTwo(new Piece(3, 2, false, Color.BLACK));
+
 
 
 
@@ -134,6 +140,11 @@ public class GameView extends Panel implements GameModelSubscriber {
 //        model.addPiecePlayerOne(new Piece(7, 4, true, Color.BLACK));
 //        model.addPiecePlayerOne(new Piece(1, 2, true, Color.BLACK));
 
+//        model.addPiecePlayerTwo(new Piece(2, 7, false, Color.RED));
+//        model.addPiecePlayerTwo(new Piece(1, 6, false, Color.RED));
+//        model.addPiecePlayerTwo(new Piece(1, 4, false, Color.RED));
+//        model.addPiecePlayerTwo(new Piece(1, 2, false, Color.RED));
+//        model.addPiecePlayerOne(new Piece(4, 5, true, Color.BLACK));
 
 
         /* Set the black player (2) moves */

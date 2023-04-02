@@ -1,10 +1,11 @@
 package GameMVC;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 public class GameModel {
 
-    enum State {FIRST_PRESS, SECOND_PRESS, OTHER_PLAYER, CAN_JUMP}
+    enum State {FIRST_PRESS, SECOND_PRESS, OTHER_PLAYER, CAN_JUMP, CAN_JUMP_AGAIN}
 
     State currentState;
 
@@ -25,7 +26,11 @@ public class GameModel {
 
     String messageToSend = "";
 
-    public GameModel() {
+    Boolean host;
+
+    public GameModel(Boolean host) {
+        this.host = host;
+
         synchronized (this) {
             currentState = State.FIRST_PRESS;
         }
@@ -138,15 +143,27 @@ public class GameModel {
     }
 
     /* Create the string of moves to send to the other player */
-    public String createMoveString(int moveToRow, int moveToCol) {
-        messageToSend += String.valueOf(7-playerRow);
-        messageToSend += ",";
-        messageToSend += String.valueOf(7-playerCol);
-        messageToSend += ",";
-        messageToSend += String.valueOf(7-moveToRow);
-        messageToSend += ",";
-        messageToSend += String.valueOf(7-moveToCol);
-        return messageToSend;
+    public String createMoveString(int moveToRow, int moveToCol, Boolean append) {
+        if (!append) {
+            messageToSend += String.valueOf(7-playerRow);
+            messageToSend += ",";
+            messageToSend += String.valueOf(7-playerCol);
+            messageToSend += ",";
+            messageToSend += String.valueOf(7-moveToRow);
+            messageToSend += ",";
+            messageToSend += String.valueOf(7-moveToCol);
+            return messageToSend;
+        } else {
+            messageToSend += "+";
+            messageToSend += String.valueOf(7-playerRow);
+            messageToSend += ",";
+            messageToSend += String.valueOf(7-playerCol);
+            messageToSend += ",";
+            messageToSend += String.valueOf(7-moveToRow);
+            messageToSend += ",";
+            messageToSend += String.valueOf(7-moveToCol);
+            return messageToSend;
+        }
     }
 
     public void clearMessageToSendString() {
@@ -244,14 +261,113 @@ public class GameModel {
                 }
             }
         }
-        System.out.println("");
-        System.out.println("canJump() -> jumpPossible="+jumpPossible);
+//        System.out.println("");
+//        System.out.println("canJump() -> jumpPossible="+jumpPossible);
         notifySubscribers();
         if (jumpPossible) currentState = State.CAN_JUMP;
         else currentState = State.FIRST_PRESS;
-        System.out.println("canJump() -> currentState="+currentState);
-        System.out.println("canJump() -> tilesPlayerCanMoveTo="+tilesPlayerCanMoveTo.size());
-        System.out.println("canJump() -> tilesOfPiecesThatCanJump="+tilesOfPiecesThatCanJump.size());
+//        System.out.println("canJump() -> currentState="+currentState);
+//        System.out.println("canJump() -> tilesPlayerCanMoveTo="+tilesPlayerCanMoveTo.size());
+//        System.out.println("canJump() -> tilesOfPiecesThatCanJump="+tilesOfPiecesThatCanJump.size());
+        return jumpPossible;
+    }
+
+    /* Return true if there are tiles the player can jump to (jump over other player piece) */
+    public Boolean canJumpAgain(Piece p) {
+        tilesPlayerCanMoveTo.removeAll(tilesPlayerCanMoveTo);
+        Boolean jumpPossible = false;
+        tilesOfPiecesThatCanJump.removeAll(tilesOfPiecesThatCanJump);
+
+        /* Check all player one pieces to see if you can capture player two piece */
+        int checkRow = p.row;
+        int checkCol = p.col;
+
+        /* Scenario 1 */
+        if (checkCol <= 1 && checkRow <= 1) ;
+
+        /* Scenario 2 */
+        if (checkCol >= 6 && checkRow <= 1);
+
+        /* Scenario 3 */
+        if (checkCol >= 6 && checkRow >= 2) {
+            if (isOccupiedByOtherPlayer(checkRow-1, checkCol-1) && !isOccupied(checkRow-2, checkCol-2)) {
+                tilesPlayerCanMoveTo.add(tiles[checkRow-2][checkCol-2]);
+                tilesOfPiecesThatCanJump.add(tiles[checkRow][checkCol]);
+                jumpPossible = true;
+            }
+        }
+
+        /* Scenario 4 */
+        if (checkCol <= 1 && checkRow >= 2) {
+            if (isOccupiedByOtherPlayer(checkRow-1, checkCol+1) && !isOccupied(checkRow-2, checkCol+2)) {
+                tilesPlayerCanMoveTo.add(tiles[checkRow-2][checkCol+2]);
+                tilesOfPiecesThatCanJump.add(tiles[checkRow][checkCol]);
+                jumpPossible = true;
+            }
+        }
+
+        /* Scenario 5 */
+        if (checkCol >= 2 && checkCol <= 5 && checkRow >= 2) {
+            if (isOccupiedByOtherPlayer(checkRow-1, checkCol+1) && !isOccupied(checkRow-2, checkCol+2)) {
+                tilesPlayerCanMoveTo.add(tiles[checkRow-2][checkCol+2]);
+                tilesOfPiecesThatCanJump.add(tiles[checkRow][checkCol]);
+                jumpPossible = true;
+            }
+            if (isOccupiedByOtherPlayer(checkRow-1, checkCol-1) && !isOccupied(checkRow-2, checkCol-2)) {
+                tilesPlayerCanMoveTo.add(tiles[checkRow-2][checkCol-2]);
+                tilesOfPiecesThatCanJump.add(tiles[checkRow][checkCol]);
+                jumpPossible = true;
+            }
+        }
+
+        if (p.isKing()) {
+
+            /* Scenario 6 */
+            if (checkRow >= 6) ;
+
+            /* Scenario 7 */
+            if (checkRow <= 5 && checkCol <= 1) {
+                if (isOccupiedByOtherPlayer(checkRow+1, checkCol+1) && !isOccupied(checkRow+2, checkCol+2)) {
+                    tilesPlayerCanMoveTo.add(tiles[checkRow+2][checkCol+2]);
+                    tilesOfPiecesThatCanJump.add(tiles[checkRow][checkCol]);
+                    jumpPossible = true;
+                }
+            }
+
+            /* Scenario 8 */
+            if (checkRow <= 5 && checkCol >= 6) {
+                if (isOccupiedByOtherPlayer(checkRow+1, checkCol-1) && !isOccupied(checkRow+2, checkCol-2)) {
+                    tilesPlayerCanMoveTo.add(tiles[checkRow+2][checkCol-2]);
+                    tilesOfPiecesThatCanJump.add(tiles[checkRow][checkCol]);
+                    jumpPossible = true;
+                }
+            }
+
+            /* Scenario 9 */
+            if (checkRow <= 5 && checkCol <= 5 && checkCol >= 2) {
+                if (isOccupiedByOtherPlayer(checkRow+1, checkCol+1) && !isOccupied(checkRow+2, checkCol+2)) {
+                    tilesPlayerCanMoveTo.add(tiles[checkRow+2][checkCol+2]);
+                    tilesOfPiecesThatCanJump.add(tiles[checkRow][checkCol]);
+                    jumpPossible = true;
+                }
+                if (isOccupiedByOtherPlayer(checkRow+1, checkCol-1) && !isOccupied(checkRow+2, checkCol-2)) {
+                    tilesPlayerCanMoveTo.add(tiles[checkRow+2][checkCol-2]);
+                    tilesOfPiecesThatCanJump.add(tiles[checkRow][checkCol]);
+                    jumpPossible = true;
+                }
+            }
+        }
+//        System.out.println("");
+        System.out.println("canJumpAgain() -> jumpPossible="+jumpPossible);
+        notifySubscribers();
+        if (jumpPossible) currentState = State.CAN_JUMP_AGAIN;
+        else {
+            tilesPlayerCanMoveTo.removeAll(tilesPlayerCanMoveTo);
+            tilesOfPiecesThatCanJump.removeAll(tilesOfPiecesThatCanJump);
+        }
+        System.out.println("canJumpAgain() -> currentState="+currentState);
+//        System.out.println("canJump() -> tilesPlayerCanMoveTo="+tilesPlayerCanMoveTo.size());
+//        System.out.println("canJump() -> tilesOfPiecesThatCanJump="+tilesOfPiecesThatCanJump.size());
         return jumpPossible;
     }
 
@@ -284,6 +400,85 @@ public class GameModel {
     public void addTileClick(int row, int col) {
 
         switch (currentState) {
+            case CAN_JUMP_AGAIN -> {
+                Piece p = null;
+                System.out.println("in CAN_JUMP_AGAIN, row="+row);
+                System.out.println("in CAN_JUMP_AGAIN, col="+col);
+
+                for (GameTile tile: tilesOfPiecesThatCanJump) {
+                    if (tile.piece.row == playerRow && tile.piece.col == playerCol) {
+                        p = tile.piece;
+                        break;
+                    }
+                }
+
+                if (p == null) return;
+
+                Boolean validMove = false;
+                for (GameTile t: tilesPlayerCanMoveTo) {
+                    if (t.col == col && t.row == row) {
+                        validMove = true;
+                        break;
+                    }
+                }
+
+                if (!validMove) return;
+
+                /* Check if you jumped over a player */
+                int colToDelete = -1;
+                int rowToDelete = -1;
+
+                if (row < playerRow) {
+                    rowToDelete = row + 1;
+                    if (col > playerCol) {
+                        colToDelete = col - 1;
+                    } else {
+                        colToDelete = col + 1;
+                    }
+                }
+                else if (row > playerRow) {
+                    rowToDelete = row - 1;
+                    if (col > playerCol) {
+                        colToDelete = col - 1;
+                    } else {
+                        colToDelete = col + 1;
+                    }
+                }
+                /* Remove the player you jumped over */
+                removePieceFromPlayer2(rowToDelete, colToDelete);
+
+//                canJumpAgain(p);
+
+                System.out.println("in CAN_JUMP_AGAIN, should be updated");
+                p.row = row;
+                p.col = col;
+
+                createMoveString(row, col, true);
+
+                if (p.row == 0) p.setKing();
+
+                if (canJumpAgain(p)) {
+                    playerRow = row;
+                    playerCol = col;
+                } else {
+                    playerRow = -1;
+                    playerCol = -1;
+                    currentState = State.OTHER_PLAYER;
+                }
+
+//                if (checkGameOver()) {
+//                    if (host) initializeHostGameBoard();
+//                    else initializeClientGameBoard();
+//                    System.out.println("GOT HERE SHOULD BE GAME OVER");
+//                }
+
+
+                System.out.println(getMessageToSend());
+
+                notifySubscribers();
+            }
+
+
             case CAN_JUMP -> {
                 System.out.println("GOT TO CAN_JUMP");
                 Piece p = null;
@@ -389,10 +584,12 @@ public class GameModel {
                 /* If valid move then re-assign row and col to piece */
                 if (validMove) {
 
+                    Boolean justMadeAJump = false;
+
                     resetTilesOfPiecesThatCanJump();
 
                     /* Create the string of the move to send to the other player */
-                    createMoveString(row, col);
+                    createMoveString(row, col, false);
 
                     /* If the piece reaches the end of the board, then set to king */
                     setIfKing(row, col, p);
@@ -401,6 +598,7 @@ public class GameModel {
                     int colToDelete = -1;
                     int rowToDelete = -1;
                     if ((Math.abs(row-playerRow))>=2 || (Math.abs(col-playerCol))>=2) {
+                        justMadeAJump = true;
 
                         if (row < playerRow) {
                             rowToDelete = row + 1;
@@ -426,8 +624,29 @@ public class GameModel {
                     p.row = row;
                     p.col = col;
 
-                    currentState = State.OTHER_PLAYER;
+                    if (justMadeAJump && canJumpAgain(p)) {
+                        playerRow = row;
+                        playerCol = col;
+                        System.out.println("playerRow="+playerRow);
+                        System.out.println("playerCol="+playerCol);
+                        notifySubscribers();
+
+                        return;
+                    } else {
+                        currentState = State.OTHER_PLAYER;
+//                        if (checkGameOver()) {
+//                            if (host) initializeHostGameBoard();
+//                            else initializeClientGameBoard();
+//                            System.out.println("GOT HERE SHOULD BE GAME OVER");
+//                        }
+                    }
+
                 }
+//                if (checkGameOver()) {
+//                    if (host) initializeHostGameBoard();
+//                    else initializeClientGameBoard();
+//                    System.out.println("GOT HERE SHOULD BE GAME OVER");
+//                }
 
                 /* Re-assign these values to be nothing */
                 playerRow = -1;
@@ -455,6 +674,16 @@ public class GameModel {
         int rowCur = Integer.parseInt(numbers[2]);
         int colCur = Integer.parseInt(numbers[3]);
 
+        int count = 0;
+        for (Piece p: playerOnePieces) {
+            System.out.println(" ");
+            System.out.println("count="+count);
+            System.out.println("row="+p.row);
+            System.out.println("col="+p.col);
+            System.out.println(" ");
+            count++;
+        }
+
         for (Piece p: playerTwoPieces) {
             if (p.row == rowPrev && p.col == colPrev) {
                 tiles[rowPrev][colPrev].piece = null;
@@ -462,11 +691,18 @@ public class GameModel {
                 p.col = colCur;
                 tiles[rowCur][colCur].piece = p;
 
+                System.out.println(" ");
+                System.out.println("ROW PRV ="+rowPrev);
+                System.out.println("COL PRV ="+colPrev);
+                System.out.println("ROW CUR ="+rowCur);
+                System.out.println("COL CUR ="+colCur);
+
 
                 /* Check if the piece made a jump */
                 int colToDelete = -1;
                 int rowToDelete = -1;
                 if ((Math.abs(rowPrev - rowCur))>=2 || (Math.abs(colPrev - colCur))>=2) {
+                    System.out.println("JUMP SHOULD BE MADE");
                     if (rowCur > rowPrev) {
                         rowToDelete = rowCur - 1;
                         if (colCur > colPrev) colToDelete = colCur - 1;
@@ -474,6 +710,7 @@ public class GameModel {
 
                         /* Remove the player you jumped over */
                         removePieceFromPlayer1(rowToDelete, colToDelete);
+                        notifySubscribers();
 
                     }
 
@@ -485,9 +722,13 @@ public class GameModel {
 
                             /* Remove the player you jumped over */
                             removePieceFromPlayer1(rowToDelete, colToDelete);
+                            notifySubscribers();
                         }
                     }
                 }
+
+                System.out.println("ROW TO DELETE ="+rowToDelete);
+                System.out.println("COL TO DELETE ="+colToDelete);
 
                 /* If the piece makes it to the last row, then set it to a king */
                 if (p.row == 7) {
@@ -499,11 +740,87 @@ public class GameModel {
         notifySubscribers();
     }
 
+    public void takeIncomingMultipleMove(String message) {
+        String[] splitStrings = message.split("\\+");
+
+        for (String s: splitStrings) {
+            takeIncomingMove(s);
+        }
+    }
+
     public void setPlayerStateToTheirTurn() {
         currentState = State.FIRST_PRESS;
     }
 
     public void setPlayerStateToOtherPlayerTurn() {
         currentState = State.OTHER_PLAYER;
+    }
+
+    public Boolean checkGameOver() {
+        return (checkPlayerOneLost() || checkPlayerTwoLost());
+    }
+
+    public Boolean checkPlayerOneLost() {
+        return (playerOnePieces.size()==0);
+    }
+
+    public Boolean checkPlayerTwoLost() {
+        return (playerTwoPieces.size()==0);
+    }
+
+    public void resetGameVariables() {
+        playerOnePieces.removeAll(playerOnePieces);
+        playerTwoPieces.removeAll(playerTwoPieces);
+        playerRow = -1;
+        playerCol = -1;
+        messageToSend = "";
+    }
+
+    public void initializeHostGameBoard() {
+        resetGameVariables();
+        currentState = State.FIRST_PRESS;
+
+        /* Set the black player (2) moves */
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
+                    this.addPiecePlayerTwo(new Piece(row, col, false, Color.BLACK));
+                }
+            }
+        }
+
+        /* Set the red player (1) moves */
+        for (int row = 5; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
+                    this.addPiecePlayerOne(new Piece(row, col, true, Color.RED));
+                }
+            }
+        }
+        notifySubscribers();
+    }
+
+    public void initializeClientGameBoard() {
+        resetGameVariables();
+        currentState = State.OTHER_PLAYER;
+
+        /* Set the black player (2) moves */
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
+                    this.addPiecePlayerTwo(new Piece(row, col, false, Color.RED));
+                }
+            }
+        }
+
+        /* Set the red player (1) moves */
+        for (int row = 5; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
+                    this.addPiecePlayerOne(new Piece(row, col, true, Color.BLACK));
+                }
+            }
+        }
+        notifySubscribers();
     }
 }

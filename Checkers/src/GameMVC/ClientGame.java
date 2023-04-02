@@ -20,7 +20,7 @@ public class ClientGame extends JPanel {
 
         /* MVC Setup */
         GameView gameView = new GameView(false);
-        gameModel = new GameModel();
+        gameModel = new GameModel(false);
         GameController gameController = new GameController();
         gameView.setModel(gameModel);
         gameView.setController(gameController);
@@ -70,7 +70,9 @@ public class ClientGame extends JPanel {
 
                     String message = new String(buffer, 0, numBytes);
                     System.out.println(message);
-                    if (!message.equals("")) gameModel.takeIncomingMove(message);
+                    System.out.println("Length: "+message.length());
+                    if (!message.equals("") && message.length() <= 8) gameModel.takeIncomingMove(message);
+                    else if (!message.equals("") && message.length() >= 8) gameModel.takeIncomingMultipleMove(message);
 
 //                    gameModel.setPlayerStateToTheirTurn();
                     gameModel.canJump();
