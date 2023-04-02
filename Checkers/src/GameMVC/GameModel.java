@@ -261,14 +261,9 @@ public class GameModel {
                 }
             }
         }
-//        System.out.println("");
-//        System.out.println("canJump() -> jumpPossible="+jumpPossible);
         notifySubscribers();
         if (jumpPossible) currentState = State.CAN_JUMP;
         else currentState = State.FIRST_PRESS;
-//        System.out.println("canJump() -> currentState="+currentState);
-//        System.out.println("canJump() -> tilesPlayerCanMoveTo="+tilesPlayerCanMoveTo.size());
-//        System.out.println("canJump() -> tilesOfPiecesThatCanJump="+tilesOfPiecesThatCanJump.size());
         return jumpPossible;
     }
 
@@ -357,17 +352,12 @@ public class GameModel {
                 }
             }
         }
-//        System.out.println("");
-        System.out.println("canJumpAgain() -> jumpPossible="+jumpPossible);
         notifySubscribers();
         if (jumpPossible) currentState = State.CAN_JUMP_AGAIN;
         else {
             tilesPlayerCanMoveTo.removeAll(tilesPlayerCanMoveTo);
             tilesOfPiecesThatCanJump.removeAll(tilesOfPiecesThatCanJump);
         }
-        System.out.println("canJumpAgain() -> currentState="+currentState);
-//        System.out.println("canJump() -> tilesPlayerCanMoveTo="+tilesPlayerCanMoveTo.size());
-//        System.out.println("canJump() -> tilesOfPiecesThatCanJump="+tilesOfPiecesThatCanJump.size());
         return jumpPossible;
     }
 
@@ -402,8 +392,6 @@ public class GameModel {
         switch (currentState) {
             case CAN_JUMP_AGAIN -> {
                 Piece p = null;
-                System.out.println("in CAN_JUMP_AGAIN, row="+row);
-                System.out.println("in CAN_JUMP_AGAIN, col="+col);
 
                 for (GameTile tile: tilesOfPiecesThatCanJump) {
                     if (tile.piece.row == playerRow && tile.piece.col == playerCol) {
@@ -447,9 +435,6 @@ public class GameModel {
                 /* Remove the player you jumped over */
                 removePieceFromPlayer2(rowToDelete, colToDelete);
 
-//                canJumpAgain(p);
-
-                System.out.println("in CAN_JUMP_AGAIN, should be updated");
                 p.row = row;
                 p.col = col;
 
@@ -466,21 +451,11 @@ public class GameModel {
                     currentState = State.OTHER_PLAYER;
                 }
 
-//                if (checkGameOver()) {
-//                    if (host) initializeHostGameBoard();
-//                    else initializeClientGameBoard();
-//                    System.out.println("GOT HERE SHOULD BE GAME OVER");
-//                }
-
-
-                System.out.println(getMessageToSend());
-
                 notifySubscribers();
             }
 
 
             case CAN_JUMP -> {
-                System.out.println("GOT TO CAN_JUMP");
                 Piece p = null;
 //                notifySubscribers();
 
@@ -501,20 +476,6 @@ public class GameModel {
             }
 
             case FIRST_PRESS -> {
-
-//                /* Check if you can jump another piece */
-//                if (canJump()) {
-//
-//                    /* Set the state to second press */
-//                    currentState = State.SECOND_PRESS;
-//
-//                    /* Save the location of the piece */
-//                    playerRow = row;
-//                    playerCol = col;
-//
-//                    notifySubscribers();
-//                    return;
-//                }
 
                 /* If the tile is occupied by the other player then don't register anything, don't move anything */
                 if (isOccupiedByOtherPlayer(row, col)) return;
@@ -634,19 +595,9 @@ public class GameModel {
                         return;
                     } else {
                         currentState = State.OTHER_PLAYER;
-//                        if (checkGameOver()) {
-//                            if (host) initializeHostGameBoard();
-//                            else initializeClientGameBoard();
-//                            System.out.println("GOT HERE SHOULD BE GAME OVER");
-//                        }
                     }
 
                 }
-//                if (checkGameOver()) {
-//                    if (host) initializeHostGameBoard();
-//                    else initializeClientGameBoard();
-//                    System.out.println("GOT HERE SHOULD BE GAME OVER");
-//                }
 
                 /* Re-assign these values to be nothing */
                 playerRow = -1;
