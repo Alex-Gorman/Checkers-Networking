@@ -82,12 +82,20 @@ public class ClientGame extends JPanel {
                 DataInputStream din = new DataInputStream(socket.getInputStream());
                 gameModel.setDataOutStream(new DataOutputStream(socket.getOutputStream()));
 
+                byte[] buffer = new byte[1024];
+                int numBytes;
+                String s = "";
+
                 while(true) {
                     String msg = din.readUTF();
                     if (msg.charAt(0) == '*'){
                         gameModel.receiveChatMessage(msg);
                     }else if(msg.charAt(0) == '@'){
                         gameModel.receiveInitMessage(msg,false);
+                    }else{
+                        gameModel.takeIncomingMove(msg);
+                        gameModel.canJump();
+
                     }
                 }
             } catch (IOException e) {

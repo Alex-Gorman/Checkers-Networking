@@ -86,12 +86,21 @@ public class HostGame extends JPanel {
                         DataInputStream din = new DataInputStream(clientSocket.getInputStream());
                         gameModel.setDataOutStream(new DataOutputStream(clientSocket.getOutputStream()));
 
+                        byte[] buffer = new byte[1024];
+                        int numBytes;
+                        String s = "";
+
                         while(true) {
                             String msg = din.readUTF();
                             if (msg.charAt(0) == '*'){
                                 gameModel.receiveChatMessage(msg);
                             }else if (msg.charAt(0) == '@'){
                                 gameModel.receiveInitMessage(msg,true);
+                            }else {
+                                gameModel.takeIncomingMove(msg);
+                                gameModel.canJump();
+
+
                             }
                         }
 

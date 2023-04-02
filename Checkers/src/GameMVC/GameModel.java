@@ -440,8 +440,7 @@ public class GameModel {
                     p.row = row;
                     p.col = col;
 
-                    currentState = State.OTHER_PLAYER;
-                }
+                    setPlayerStateToOtherPlayerTurn();                }
 
                 /* Re-assign these values to be nothing */
                 playerRow = -1;
@@ -518,7 +517,15 @@ public class GameModel {
     }
 
     public void setPlayerStateToOtherPlayerTurn() {
+
         currentState = State.OTHER_PLAYER;
+        try {
+            dout.writeUTF( getMessageToSend());
+            clearMessageToSendString();
+        }catch (Exception e){
+
+        }
+
     }
 
     // Leo
