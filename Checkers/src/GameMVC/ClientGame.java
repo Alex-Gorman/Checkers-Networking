@@ -80,13 +80,16 @@ public class ClientGame extends JPanel {
 
 
 
-        gameModel.addSocket(socket);
-        gameModel.sendInitMessage(gameModel.clientName);
 
+    }
+
+    public void sendInitMsg (){
+        gameModel.sendInitMessage(gameModel.clientName);
     }
 
     public void addSocket(Socket fd) {
         socket = fd;
+        gameModel.addSocket(socket);
     }
 
     public void setClientUsername(String clientUsername){ gameModel.setClientName(clientUsername);}

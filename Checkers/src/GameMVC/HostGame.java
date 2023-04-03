@@ -79,12 +79,17 @@ public class HostGame extends JPanel {
         gbc.gridwidth = 1;
         this.add(quitPanel,gbc);
 
-        gameModel.addSocket(clientSocket);
+    }
+
+    public void sendInitMsg (){
         gameModel.sendInitMessage(gameModel.hostName);
     }
 
+
     public void addClientSocket(Socket fd) {
         clientSocket = fd;
+        gameModel.addSocket(clientSocket);
+
     }
 
     public void addServerSocket(ServerSocket fd) {

@@ -852,7 +852,7 @@ public class GameModel {
         try {
             dout = new DataOutputStream(socket.getOutputStream());
         }catch (Exception e){
-
+            e.printStackTrace();
         }
     }
 
@@ -875,9 +875,11 @@ public class GameModel {
     public void sendInitMessage(String msg){
         try {
             dout.writeUTF(initPrefix + msg);
+            System.out.println("send");
         }catch (Exception e){
-
+            e.printStackTrace();
         }
+        notifySubscribers();
     }
 
     public void receiveChatMessage(String msg){
@@ -893,7 +895,8 @@ public class GameModel {
         }else{
             setHostName(msg);
         }
-
+        System.out.println(msg);
+        notifySubscribers();
     }
 
     public ArrayList<String> getChatMessage(){
@@ -954,8 +957,4 @@ public class GameModel {
         notifySubscribers();
     }
 
-    // Alex, when game over we need to start a new round
-    public void restart() {
-
-    }
 }

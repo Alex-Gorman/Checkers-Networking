@@ -57,7 +57,7 @@ public class ChatView extends JPanel implements GameModelSubscriber{
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     try {
-                        gameController.handleSend(text.getText(), false);
+                        gameController.handleSend(text.getText(), host);
                         text.setText("");
                     } catch (Exception e1) {
                         e1.printStackTrace();
@@ -69,7 +69,7 @@ public class ChatView extends JPanel implements GameModelSubscriber{
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     try {
-                        gameController.handleSend(text.getText(), false);
+                        gameController.handleSend(text.getText(), host);
                         text.setText("");
                     } catch (Exception e1) {
                         e1.printStackTrace();

@@ -163,13 +163,13 @@ public class ClientMenu extends JPanel {
         Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
 
         clientGame.addSocket(socket);
-//        clientGame.setClientUsername(nameTextField.getText());
         if (! Objects.equals(userName.getText(), "Enter Your Username")){
             clientGame.setClientUsername(userName.getText());
         }
 
         /* Create the thread to start messaging with the host */
         clientGame.startMessaging();
+        clientGame.sendInitMsg();
 
         this.frame.getContentPane().removeAll();
         this.frame.getContentPane().add(clientGame);

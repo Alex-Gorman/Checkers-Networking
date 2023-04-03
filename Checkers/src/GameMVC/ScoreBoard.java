@@ -13,8 +13,8 @@ public class ScoreBoard extends JPanel implements GameModelSubscriber {
     JLabel Turn;
     public ScoreBoard(){
 
-        player1 = new JLabel("Player 1: " );
-        player2 = new JLabel("Player 2: " );
+        player1 = new JLabel("Player1: " );
+        player2 = new JLabel("Player2: " );
         Turn = new JLabel("Turn: " );
 
         player1.setFont(new Font("SAN_SERIF", Font.BOLD, 20));

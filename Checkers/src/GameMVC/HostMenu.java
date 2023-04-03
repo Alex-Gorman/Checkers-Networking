@@ -187,6 +187,7 @@ public class HostMenu extends JPanel {
 
             /* Create the thread to start messaging with the client */
             hostGame.startMessaging();
+            hostGame.sendInitMsg();
 
             this.frame.getContentPane().removeAll();
             this.frame.getContentPane().add(hostGame);
