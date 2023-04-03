@@ -110,8 +110,8 @@ public class GameView extends Panel implements GameModelSubscriber {
 
 
 
-
-        model.addPiecePlayerTwo(new Piece(4, 4, false, Color.BLUE));
+        model.addPiecePlayerTwo(new Piece(5, 3, false, Color.BLUE));
+//        model.addPiecePlayerTwo(new Piece(4, 4, false, Color.BLUE));
         model.addPiecePlayerOne(new Piece(7, 1, true, Color.RED));
 
 //        model.addPiecePlayerTwo(new Piece(6, 1, false, Color.BLACK));
@@ -126,7 +126,8 @@ public class GameView extends Panel implements GameModelSubscriber {
     public void initializeClientGameBoard() {
 
         model.addPiecePlayerTwo(new Piece(0, 6, false, Color.RED));
-        model.addPiecePlayerOne(new Piece(3, 3, true, Color.BLUE));
+//        model.addPiecePlayerOne(new Piece(3, 3, true, Color.BLUE));
+        model.addPiecePlayerOne(new Piece(2, 4, true, Color.BLUE));
 
 //        model.addPiecePlayerTwo(new Piece(0, 5, false, Color.RED));
 //        model.addPiecePlayerOne(new Piece(1, 6, true, Color.BLACK));

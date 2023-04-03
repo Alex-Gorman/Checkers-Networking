@@ -55,7 +55,7 @@ public class GameModel {
     public GameModel(Boolean host) {
         this.host = host;
 
-//        gameStarted = true;
+        gameStarted = true;
 
         synchronized (this) {
             currentState = State.FIRST_PRESS;
@@ -716,7 +716,7 @@ public class GameModel {
             }
         }
         if (checkPlayerOneLost()) {
-            System.out.println("got here");
+            System.out.println("GOT HERE 2");
             updateScore(hostScore, clientScore+1);
 
             if (host) {
@@ -729,6 +729,7 @@ public class GameModel {
             currentState = State.OTHER_PLAYER;
             messageToSend = "";
             System.out.println("CURRENT STATE ="+currentState);
+//            gameStarted = false;
 
         }
 
@@ -736,6 +737,7 @@ public class GameModel {
     }
 
     public void takeIncomingMultipleMove(String message) {
+//        gameStarted = true;
         String[] splitStrings = message.split("\\+");
 
         for (String s: splitStrings) {
@@ -820,11 +822,12 @@ public class GameModel {
 
     public void setPlayerStateToOtherPlayerTurn() {
 
+        System.out.println("GOT HERE 1");
         if (checkGameOver()) {
             if (checkPlayerTwoLost()) {
-                updateScore(hostScore+1, clientScore);
-            } else if (checkPlayerTwoLost()) {
                 updateScore(hostScore, clientScore+1);
+            } else if (checkPlayerOneLost()) {
+                updateScore(hostScore+1, clientScore);
             }
 
             if (host) {
