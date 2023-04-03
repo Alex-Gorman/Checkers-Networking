@@ -41,6 +41,8 @@ public class MainMenu extends JPanel {
         gbc.gridy = 1;
         this.add(AwayGameButton,gbc);
 
+        setBackground(new Color(159,235,237)); // Set the background color to red
+
         hostGameButton.addActionListener(e -> {
             frame.getContentPane().removeAll();
             frame.getContentPane().add(HostPanel);

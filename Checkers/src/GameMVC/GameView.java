@@ -90,72 +90,47 @@ public class GameView extends Panel implements GameModelSubscriber {
 
     public void initializeHostGameBoard() {
 
-//        /* Set the black player (2) moves */
-//        for (int row = 0; row < 3; row++) {
-//            for (int col = 0; col < 8; col++) {
-//                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
-//                    model.addPiecePlayerTwo(new Piece(row, col, false, white));
-//                }
-//            }
-//        }
-//
-//        /* Set the red player (1) moves */
-//        for (int row = 5; row < 8; row++) {
-//            for (int col = 0; col < 8; col++) {
-//                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
-//                    model.addPiecePlayerOne(new Piece(row, col, true, black));
-//                }
-//            }
-//        }
+        /* Set the black player (2) moves */
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
+                    model.addPiecePlayerTwo(new Piece(row, col, false, white));
+                }
+            }
+        }
 
+        /* Set the red player (1) moves */
+        for (int row = 5; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
+                    model.addPiecePlayerOne(new Piece(row, col, true, black));
+                }
+            }
+        }
 
-
-        model.addPiecePlayerTwo(new Piece(5, 3, false, Color.BLUE));
-//        model.addPiecePlayerTwo(new Piece(4, 4, false, Color.BLUE));
-        model.addPiecePlayerOne(new Piece(7, 1, true, Color.RED));
-
-//        model.addPiecePlayerTwo(new Piece(6, 1, false, Color.BLACK));
-//        model.addPiecePlayerOne(new Piece(7, 2, true, Color.RED));
-
-        /* Test using this */
-//        model.addPiecePlayerTwo(new Piece(0, 3, false, Color.BLACK));
-//        model.addPiecePlayerOne(new Piece(3, 6, true, Color.RED));
-//        model.addPiecePlayerTwo(new Piece(6, 5, false, Color.BLACK));
     }
 
     public void initializeClientGameBoard() {
 
-        model.addPiecePlayerTwo(new Piece(0, 6, false, Color.RED));
-//        model.addPiecePlayerOne(new Piece(3, 3, true, Color.BLUE));
-        model.addPiecePlayerOne(new Piece(2, 4, true, Color.BLUE));
-
-//        model.addPiecePlayerTwo(new Piece(0, 5, false, Color.RED));
-//        model.addPiecePlayerOne(new Piece(1, 6, true, Color.BLACK));
-
-        /* Test using this */
-//        model.addPiecePlayerTwo(new Piece(4, 1, false, Color.RED));
-//        model.addPiecePlayerOne(new Piece(7, 4, true, Color.BLACK));
-//        model.addPiecePlayerOne(new Piece(1, 2, true, Color.BLACK));
 
 
+        /* Set the black player (2) moves */
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
+                    model.addPiecePlayerTwo(new Piece(row, col, false, black));
+                }
+            }
+        }
 
-//        /* Set the black player (2) moves */
-//        for (int row = 0; row < 3; row++) {
-//            for (int col = 0; col < 8; col++) {
-//                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
-//                    model.addPiecePlayerTwo(new Piece(row, col, false, black));
-//                }
-//            }
-//        }
-//
-//        /* Set the red player (1) moves */
-//        for (int row = 5; row < 8; row++) {
-//            for (int col = 0; col < 8; col++) {
-//                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
-//                    model.addPiecePlayerOne(new Piece(row, col, true, white));
-//                }
-//            }
-//        }
+        /* Set the red player (1) moves */
+        for (int row = 5; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
+                    model.addPiecePlayerOne(new Piece(row, col, true, white));
+                }
+            }
+        }
     }
 
 

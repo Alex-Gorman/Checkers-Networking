@@ -78,6 +78,10 @@ public class ChatView extends JPanel implements GameModelSubscriber{
             }
         });
 
+        this.setBackground(new Color(159,235,237,160)); // Set the background color to red
+        text.setBackground(new Color(243,221,188));
+        textArea.setBackground(new Color(243,221,188));
+
         this.setFocusable(true);
         this.requestFocusInWindow();
 

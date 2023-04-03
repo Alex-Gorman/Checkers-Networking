@@ -86,7 +86,8 @@ public class GameTile extends JButton {
         Graphics g = image.getGraphics();
         g.setColor(color);
         g.fillOval(0, 0, circleSize, circleSize);
-        g.setColor(new Color(255,215,0));
+//        g.setColor(new Color(255,215,0));
+        g.setColor(new Color(196,148,23, 255));
         int innerCircleSize = circleSize * 1/2;
         int innerCircleOffset = (circleSize - innerCircleSize) / 2;
         g.fillOval(innerCircleOffset, innerCircleOffset, innerCircleSize, innerCircleSize);

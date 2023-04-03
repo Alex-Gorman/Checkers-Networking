@@ -10,12 +10,10 @@ public class ScoreBoard extends JPanel implements GameModelSubscriber {
 
     JLabel player1 ;
     JLabel player2 ;
-    JLabel Turn;
     public ScoreBoard(){
 
         player1 = new JLabel("Player1: " );
         player2 = new JLabel("Player2: " );
-        Turn = new JLabel("Turn: " );
 
         player1.setFont(new Font("SAN_SERIF", Font.BOLD, 20));
         player2.setFont(new Font("SAN_SERIF", Font.BOLD, 20));
@@ -32,17 +30,14 @@ public class ScoreBoard extends JPanel implements GameModelSubscriber {
         gbc.gridx = 0;
         gbc.gridy = 1;
         this.add(player2,gbc);
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        this.add(Turn,gbc);
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        setBackground(new Color(243,221,188));
     }
 
     public void setModel(GameModel newGameModel) {
         model = newGameModel;
         player1.setText(model.hostName + ": " + model.hostScore);
         player2.setText(model.clientName + ": " + model.clientScore);
-        Turn.setText("Turn: "+ model.turn);
 
     }
 
@@ -54,7 +49,6 @@ public class ScoreBoard extends JPanel implements GameModelSubscriber {
     public void modelUpdated() {
         player1.setText(model.hostName + ": " + model.hostScore);
         player2.setText(model.clientName + ": " + model.clientScore);
-        Turn.setText("Turn: "+ model.turn);
         this.revalidate();
         this.repaint();
     }

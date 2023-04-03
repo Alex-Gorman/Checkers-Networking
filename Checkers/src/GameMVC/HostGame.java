@@ -49,9 +49,12 @@ public class HostGame extends JPanel {
             gameController.quitGame();
 
         });
+        setBackground(new Color(159,235,237,160));
 
         JPanel quitPanel = new JPanel();
         quitPanel.add(quitButton);
+
+        quitPanel.setBackground(new Color(159,235,237,160));
 
         GridBagLayout layout = new GridBagLayout();
         this.setLayout(layout);

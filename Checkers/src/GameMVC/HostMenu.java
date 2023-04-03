@@ -107,6 +107,7 @@ public class HostMenu extends JPanel {
                 throw new RuntimeException(ex);
             }
         });
+        setBackground(new Color(159,235,237)); // Set the background color to red
 
         /* Leo, please add comments here to explain what you did */
         gbc.gridx=0;

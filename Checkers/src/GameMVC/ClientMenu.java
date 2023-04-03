@@ -86,6 +86,7 @@ public class ClientMenu extends JPanel {
         GridBagLayout layout = new GridBagLayout();
         this.setLayout(layout);
         GridBagConstraints gbc = new GridBagConstraints();
+        setBackground(new Color(159,235,237)); // Set the background color to red
 
         /* Leo, please add comments here to explain what you did */
         gbc.insets = new Insets(10,10,10,10);

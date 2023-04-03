@@ -717,7 +717,12 @@ public class GameModel {
         }
         if (checkPlayerOneLost()) {
             System.out.println("GOT HERE 2");
-            updateScore(hostScore, clientScore+1);
+            if (host){
+                updateScore(hostScore, clientScore+1);
+
+            }else {
+                updateScore(hostScore+1, clientScore);
+            }
 
             if (host) {
                 initializeHostGameBoard();
@@ -825,9 +830,19 @@ public class GameModel {
         System.out.println("GOT HERE 1");
         if (checkGameOver()) {
             if (checkPlayerTwoLost()) {
-                updateScore(hostScore, clientScore+1);
+                if (host){
+                    updateScore(hostScore + 1, clientScore);
+
+                }else {
+                    updateScore(hostScore, clientScore+1);
+                }
             } else if (checkPlayerOneLost()) {
-                updateScore(hostScore+1, clientScore);
+                if (host){
+                    updateScore(hostScore, clientScore+1);
+
+                }else {
+                    updateScore(hostScore+1, clientScore);
+                }
             }
 
             if (host) {
