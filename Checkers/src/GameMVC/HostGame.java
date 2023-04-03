@@ -16,6 +16,8 @@ public class HostGame extends JPanel {
 
     public HostGame(Boolean host) {
 
+
+
         /* MVC Setup */
         GameView gameView = new GameView(host);
         gameModel = new GameModel(true);
@@ -54,7 +56,7 @@ public class HostGame extends JPanel {
         JPanel quitPanel = new JPanel();
         quitPanel.add(quitButton);
 
-        quitPanel.setBackground(new Color(159,235,237,160));
+        quitPanel.setBackground(new Color(159,235,237,0));
 
         GridBagLayout layout = new GridBagLayout();
         this.setLayout(layout);

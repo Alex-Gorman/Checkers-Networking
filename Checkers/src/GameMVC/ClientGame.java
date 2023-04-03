@@ -14,7 +14,6 @@ public class ClientGame extends JPanel {
     GameModel gameModel;
     public ClientGame() {
 
-        Color backgroundClr = new Color(159,235,237,160);
         /* MVC Setup */
         GameView gameView = new GameView(false);
         gameModel = new GameModel(false);
@@ -40,7 +39,7 @@ public class ClientGame extends JPanel {
         scoreBoard.setController(gameController);
         gameModel.addSubscriber(scoreBoard);
         scoreBoard.setPreferredSize(new Dimension(300, 100));
-        this.setBackground(backgroundClr); // Set the background color to red
+        this.setBackground(new Color(159,235,237,160)); // Set the background color to red
 
 
         JButton quitButton = new JButton("Quit Game");
@@ -53,7 +52,7 @@ public class ClientGame extends JPanel {
 
         JPanel quitPanel = new JPanel();
         quitPanel.add(quitButton);
-        quitPanel.setBackground(backgroundClr); // Set the background color to red
+        quitPanel.setBackground(new Color(159,235,237,0)); // Set the background color to red
 
         GridBagLayout layout = new GridBagLayout();
         this.setLayout(layout);
