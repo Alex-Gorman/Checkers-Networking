@@ -49,9 +49,13 @@ public class GameModel {
 
     Boolean host;
 
+    Boolean gameStarted;
+
     String turn;
     public GameModel(Boolean host) {
         this.host = host;
+
+//        gameStarted = true;
 
         synchronized (this) {
             currentState = State.FIRST_PRESS;
@@ -711,6 +715,23 @@ public class GameModel {
                 break;
             }
         }
+        if (checkPlayerOneLost()) {
+            System.out.println("got here");
+            updateScore(hostScore, clientScore+1);
+
+            if (host) {
+                initializeHostGameBoard();
+            } else {
+                initializeClientGameBoard();
+            }
+
+
+            currentState = State.OTHER_PLAYER;
+            messageToSend = "";
+            System.out.println("CURRENT STATE ="+currentState);
+
+        }
+
         notifySubscribers();
     }
 
@@ -744,7 +765,7 @@ public class GameModel {
         playerTwoPieces.removeAll(playerTwoPieces);
         playerRow = -1;
         playerCol = -1;
-        messageToSend = "";
+//        messageToSend = "";
     }
 
     public void initializeHostGameBoard() {
@@ -755,7 +776,7 @@ public class GameModel {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 8; col++) {
                 if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
-                    this.addPiecePlayerTwo(new Piece(row, col, false, Color.BLACK));
+                    this.addPiecePlayerTwo(new Piece(row, col, false, Color.BLUE));
                 }
             }
         }
@@ -773,9 +794,9 @@ public class GameModel {
 
     public void initializeClientGameBoard() {
         resetGameVariables();
-//        currentState = State.OTHER_PLAYER;
+        currentState = State.OTHER_PLAYER;
 
-        setPlayerStateToOtherPlayerTurn();
+//        setPlayerStateToOtherPlayerTurn();
 
         /* Set the black player (2) moves */
         for (int row = 0; row < 3; row++) {
@@ -790,7 +811,7 @@ public class GameModel {
         for (int row = 5; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
-                    this.addPiecePlayerOne(new Piece(row, col, true, Color.BLACK));
+                    this.addPiecePlayerOne(new Piece(row, col, true, Color.BLUE));
                 }
             }
         }
@@ -799,7 +820,23 @@ public class GameModel {
 
     public void setPlayerStateToOtherPlayerTurn() {
 
-        currentState = State.OTHER_PLAYER;
+        if (checkGameOver()) {
+            if (checkPlayerTwoLost()) {
+                updateScore(hostScore+1, clientScore);
+            } else if (checkPlayerTwoLost()) {
+                updateScore(hostScore, clientScore+1);
+            }
+
+            if (host) {
+                initializeHostGameBoard();
+            } else {
+                initializeClientGameBoard();
+            }
+
+            currentState = State.FIRST_PRESS;
+        }
+
+        else currentState = State.OTHER_PLAYER;
         try {
             dout.writeUTF( getMessageToSend());
             clearMessageToSendString();
