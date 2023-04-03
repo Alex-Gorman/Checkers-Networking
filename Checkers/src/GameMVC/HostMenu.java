@@ -1,4 +1,4 @@
-//import Game.GamePanelHost;
+package GameMVC;//import Game.GamePanelHost;
 import GameMVC.HostGame;
 
 import javax.swing.*;
@@ -11,23 +11,24 @@ import java.util.Objects;
 
 public class HostMenu extends JPanel {
 
-    JPanel mainMenu;
+    MainMenu mainMenu;
     JFrame frame;
     JButton mainMenuButton;
 
     JTextField nameTextField = new JTextField("Enter Your Username");
 
+    /* TextField for user to enter port Number they will connect to client with */
+    JTextField portNumberTextField = new JTextField("Enter Port Number");
+
     HostGame hostGame;
+
+    ServerSocket serverSocket;
 
     public HostMenu(JFrame frame) {
 
         this.frame = frame;
 
-        /* Create the game object and set host to true */
-        hostGame = new HostGame(true);
 
-        /* TextField for user to enter port Number they will connect to client with */
-        JTextField portNumberTextField = new JTextField("Enter Port Number");
 
         /* Button to go back to main menu */
         mainMenuButton = new JButton("Main Menu");
@@ -47,6 +48,10 @@ public class HostMenu extends JPanel {
             @Override
             public void focusLost(FocusEvent e) {
                 /* Do nothing */
+                if (Objects.equals(portNumberTextField.getText(), "")){
+                    portNumberTextField.setText("Enter Port Number");
+
+                }
             }
         });
 
@@ -63,7 +68,9 @@ public class HostMenu extends JPanel {
 
             @Override
             public void focusLost(FocusEvent e) {
-                /* Do nothing */
+                if (Objects.equals(nameTextField.getText(), "")){
+                    nameTextField.setText("Enter Your Username");
+                }
             }
         });
 
@@ -110,10 +117,12 @@ public class HostMenu extends JPanel {
         gbc.gridy=3;
         gbc.gridwidth = 2;
         this.add(mainMenuButton,gbc);
+
+
     }
 
     /* Gives host menu object the main menu panel to allow the user to switch back to main menu */
-    public void addMainPanel(JPanel mainPanel){
+    public void addMainPanel(MainMenu mainPanel){
         this.mainMenu = mainPanel;
         mainMenuButton.addActionListener(e->{
             frame.getContentPane().removeAll();
@@ -121,15 +130,45 @@ public class HostMenu extends JPanel {
             frame.revalidate();
             frame.repaint();
         });
+
+    }
+
+    public static boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            double d = Double.parseDouble(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
     }
 
     private void Connect() throws IOException {
 
         /* Leo, later we will set this number to be inputed from the user */
-        int portNumber = 30000;
-
-        ServerSocket serverSocket = new ServerSocket(portNumber);
+        hostGame = new HostGame(true);
+        hostGame.setMainMenu(mainMenu);
+        hostGame.setFrame(frame);
         System.out.println("Server started.");
+        int portNumber = 30000;
+        if (serverSocket!=null){
+            serverSocket.close();
+        }
+
+        if (isNumeric(portNumberTextField.getText()) &&
+                (Integer.parseInt(portNumberTextField.getText()) >= 30000) &&
+                (Integer.parseInt(portNumberTextField.getText()) <= 40000)){
+            portNumber = Integer.parseInt(portNumberTextField.getText());
+        }
+
+        try{
+            serverSocket = new ServerSocket(portNumber);
+        }catch (Exception e) {
+            System.out.println("Error: server socket can't work with port "+portNumber);
+            return;
+        }
 
         /* Timeout to accept client for game in milliseconds, 1 s = 1000 ms */
         serverSocket.setSoTimeout(10000);
@@ -140,6 +179,8 @@ public class HostMenu extends JPanel {
 
             /* Send client socket to the HostGame object */
             hostGame.addClientSocket(clientSocket);
+            hostGame.addServerSocket(serverSocket);
+
             if (! Objects.equals(nameTextField.getText(), "Enter Your Username")){
                 hostGame.setHostUsername(nameTextField.getText());
             }
@@ -154,49 +195,7 @@ public class HostMenu extends JPanel {
 
         } catch (SocketTimeoutException e) {
             /* Hande timeout */
+
         }
     }
 }
-
-
-//    private void Connect() throws IOException {
-//        ServerSocket serverSocket = new ServerSocket(30000);
-//        System.out.println("Server started on port " + 30000);
-//
-//        while (true) {
-//            Socket clientSocket = serverSocket.accept();
-//            System.out.println("New client connected: " + clientSocket.getInetAddress().getHostAddress());
-//            frame.getContentPane().removeAll();
-//            frame.getContentPane().add(this.mainMenu);
-//            frame.revalidate();
-//            frame.repaint();
-//            Thread clientThread = new Thread(() -> handleClient(clientSocket));
-//            clientThread.start();
-//        }
-//    }
-//    private static void handleClient(Socket clientSocket) {
-//        try {
-//            InputStream inputStream = clientSocket.getInputStream();
-//            OutputStream outputStream = clientSocket.getOutputStream();
-//
-//            byte[] buffer = new byte[1024];
-//            int numBytes;
-//
-//            while ((numBytes = inputStream.read(buffer)) != -1) {
-//                String message = new String(buffer, 0, numBytes);
-//                System.out.println("Received message from client: " + message);
-//                Scanner scanner = new Scanner(System.in);
-//                System.out.print("Enter a message to send to the server: ");
-//
-//                String message2 = scanner.nextLine();
-//
-//                // Send the message back to the client
-//                outputStream.write(message2.getBytes());
-//            }
-//            System.out.println("Client disconnected: " + clientSocket.getInetAddress().getHostAddress());
-//            clientSocket.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//}

@@ -1,3 +1,5 @@
+package GameMVC;
+
 import GameMVC.ClientGame;
 
 import javax.swing.*;
@@ -10,60 +12,74 @@ import java.util.Objects;
 
 public class ClientMenu extends JPanel {
 
-    JPanel mainPanel;
+    MainMenu mainPanel;
     JFrame frame;
     JButton mainMenuButton = new JButton("Main Menu");
 
     JTextField userName = new JTextField("Enter Your Username");
+    JTextField hostIpField = new JTextField("Enter Host IP Address");
+    JTextField hostPortField = new JTextField("Enter Port Number");
 
     ClientGame clientGame;
     public ClientMenu(JFrame frame) {
 
         this.frame = frame;
 
-        clientGame = new ClientGame();
+
+
         mainMenuButton.setPreferredSize(new Dimension(350, 100));
         mainMenuButton.setFont(new Font("",Font.PLAIN,20));
         JButton connect = new JButton("Connect");
         connect.setFont(new Font("",Font.PLAIN,20));
         connect.setBackground(Color.GREEN);
-        connect.setPreferredSize(new Dimension(350, 100));        JTextField hostPortField = new JTextField("Enter Host Port Number");
-
-        JTextField hostIpField = new JTextField("Enter Host IP Address");
+        connect.setPreferredSize(new Dimension(350, 100));
 
         hostPortField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                hostPortField.setText("");
+                if (Objects.equals(hostPortField.getText(), "Enter Port Number")){
+                    hostPortField.setText("");
+                }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                /* Do nothing */
+                if (Objects.equals(hostPortField.getText(), "")){
+                    hostPortField.setText("Enter Port Number");
+                }
             }
         });
 
         hostIpField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                hostIpField.setText("");
+                if (Objects.equals(hostIpField.getText(), "Enter Host IP Address")){
+                    hostIpField.setText("");
+                }
+
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                /* Do nothing */
+                if (Objects.equals(hostIpField.getText(), "")){
+                    hostIpField.setText("Enter Host IP Address");
+                }
             }
         });
 
         userName.addFocusListener(new FocusListener() {
-            @Override
             public void focusGained(FocusEvent e) {
-                userName.setText("");
+                if (Objects.equals(userName.getText(), "Enter Your Username")){
+                    userName.setText("");
+                }
+
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                /* Do nothing */
+                if (Objects.equals(userName.getText(), "")){
+                    userName.setText("Enter Your Username");
+                }
             }
         });
         /* Leo, please add comments here to explain what you did */
@@ -106,7 +122,7 @@ public class ClientMenu extends JPanel {
         });
     }
 
-    public void addMainPanel(JPanel mainPanel) {
+    public void addMainPanel(MainMenu mainPanel) {
         this.mainPanel = mainPanel;
         mainMenuButton.addActionListener(e -> {
             frame.getContentPane().removeAll();
@@ -114,11 +130,36 @@ public class ClientMenu extends JPanel {
             frame.revalidate();
             frame.repaint();
         });
+
+    }
+
+    public static boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            double d = Double.parseDouble(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
     }
 
     private void Connect() throws IOException {
+        clientGame = new ClientGame();
+        clientGame.setMainMenu(mainPanel);
+        clientGame.setFrame(frame);
         String SERVER_ADDRESS = "127.0.1.1";
         int SERVER_PORT = 30000;
+        if (isNumeric(hostPortField.getText()) &&
+                (Integer.parseInt(hostPortField.getText()) >= 30000) &&
+                (Integer.parseInt(hostPortField.getText()) <= 40000)){
+            SERVER_PORT = Integer.parseInt(hostPortField.getText());
+        }
+        if (!Objects.equals(hostIpField.getText(), "Enter Host IP Address") && !Objects.equals(hostIpField.getText(),"")){
+            SERVER_ADDRESS = hostIpField.getText();
+        }
+
         Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
 
         clientGame.addSocket(socket);
@@ -136,32 +177,3 @@ public class ClientMenu extends JPanel {
         this.frame.repaint();
     }
 }
-
-//    private void Connect() throws IOException {
-//
-//        String SERVER_ADDRESS = "127.0.1.1";
-//        int SERVER_PORT = 30000;
-//        Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
-//
-//        System.out.println("Connected to server");
-//
-//        InputStream inputStream = socket.getInputStream();
-//        OutputStream outputStream = socket.getOutputStream();
-//
-//        Scanner scanner = new Scanner(System.in);
-//
-//        while (true) {
-//            System.out.print("Enter a message to send to the server: ");
-//            String message = scanner.nextLine();
-//
-//            // Send the message to the server
-//            outputStream.write(message.getBytes());
-//
-//            // Receive the response from the server
-//            byte[] buffer = new byte[1024];
-//            int numBytes = inputStream.read(buffer);
-//            String response = new String(buffer, 0, numBytes);
-//            System.out.println("Received response from server: " + response);
-//        }
-//    }
-//}

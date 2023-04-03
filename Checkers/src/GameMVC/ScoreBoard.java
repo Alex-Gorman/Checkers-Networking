@@ -40,9 +40,9 @@ public class ScoreBoard extends JPanel implements GameModelSubscriber {
 
     public void setModel(GameModel newGameModel) {
         model = newGameModel;
-        player1.setText(player1.getText() + model.player1Score);
-        player2.setText(player2.getText() + model.player2Score);
-        Turn.setText(Turn.getText() + "TODO: Turns");
+        player1.setText(model.hostName + ": " + model.hostScore);
+        player2.setText(model.clientName + ": " + model.clientScore);
+        Turn.setText("Turn: "+ model.turn);
 
     }
 
@@ -52,8 +52,9 @@ public class ScoreBoard extends JPanel implements GameModelSubscriber {
 
     @Override
     public void modelUpdated() {
-        player1.setText(player1.getText() + model.player1Score);
-        player2.setText(player2.getText() + model.player2Score);
+        player1.setText(model.hostName + ": " + model.hostScore);
+        player2.setText(model.clientName + ": " + model.clientScore);
+        Turn.setText("Turn: "+ model.turn);
         this.revalidate();
         this.repaint();
     }

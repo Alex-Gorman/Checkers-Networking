@@ -1,10 +1,12 @@
+package GameMVC;
+
 import javax.swing.*;
 import  java.net.*;
 public class SwingFrame {
 
     public static void main(String[] args) throws UnknownHostException {
         /* Frame to hold the GUI in */
-        JFrame frame = new JFrame("Main UI");
+        JFrame frame = new JFrame("Checkers");
 
         /* Close the frame on close */
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

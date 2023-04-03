@@ -3,11 +3,14 @@ package GameMVC;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 public class HostGame extends JPanel {
 
     Socket clientSocket;
+
+    ServerSocket serverSocket;
 
     GameModel gameModel;
 
@@ -39,6 +42,17 @@ public class HostGame extends JPanel {
         gameModel.addSubscriber(scoreBoard);
         scoreBoard.setPreferredSize(new Dimension(300, 100));
 
+        JButton quitButton = new JButton("Quit Game");
+        quitButton.setFont(new Font("SAN_SERIF", Font.PLAIN, 16));
+        quitButton.setMaximumSize(new Dimension(80,30));
+        quitButton.addActionListener(e -> {
+            gameController.quitGame();
+
+        });
+
+        JPanel quitPanel = new JPanel();
+        quitPanel.add(quitButton);
+
         GridBagLayout layout = new GridBagLayout();
         this.setLayout(layout);
         GridBagConstraints gbc = new GridBagConstraints();
@@ -59,8 +73,11 @@ public class HostGame extends JPanel {
         gbc.gridheight = 1;
         gbc.gridwidth = 1;
         this.add(scoreBoard,gbc);
-
-
+        gbc.gridx = 2;
+        gbc.gridy = 3;
+        gbc.gridheight = 1;
+        gbc.gridwidth = 1;
+        this.add(quitPanel,gbc);
 
         gameModel.addSocket(clientSocket);
         gameModel.sendInitMessage(gameModel.hostName);
@@ -69,6 +86,12 @@ public class HostGame extends JPanel {
     public void addClientSocket(Socket fd) {
         clientSocket = fd;
     }
+
+    public void addServerSocket(ServerSocket fd) {
+        serverSocket = fd;
+        gameModel.setServerSocket(serverSocket);
+    }
+
 
     public void setHostUsername(String hostUsername){ gameModel.setHostName(hostUsername);}
 
@@ -86,28 +109,37 @@ public class HostGame extends JPanel {
                         DataInputStream din = new DataInputStream(clientSocket.getInputStream());
                         gameModel.setDataOutStream(new DataOutputStream(clientSocket.getOutputStream()));
 
-                        byte[] buffer = new byte[1024];
-                        int numBytes;
-                        String s = "";
 
                         while(true) {
-                            String msg = din.readUTF();
-                            if (msg.charAt(0) == '*'){
-                                gameModel.receiveChatMessage(msg);
-                            }else if (msg.charAt(0) == '@'){
-                                gameModel.receiveInitMessage(msg,true);
-                            }else {
-                                if (msg.length() <= 8) gameModel.takeIncomingMove(msg);
-                                else if (msg.length() >=8) gameModel.takeIncomingMultipleMove(msg);
-                                gameModel.canJump();
+                                String msg = din.readUTF();
+                                if (msg.charAt(0) == '*'){
+                                    gameModel.receiveChatMessage(msg);
+                                }else if (msg.charAt(0) == '@'){
+                                    gameModel.receiveInitMessage(msg,true);
+                                }else if (msg.equals("%")){
+                                    clientSocket.close();
+                                    serverSocket.close();
+                                    gameModel.toMainMenu();
+                                }else {
+                                    if (msg.length() <= 8) gameModel.takeIncomingMove(msg);
+                                    else gameModel.takeIncomingMultipleMove(msg);
+                                    gameModel.canJump();
+                                }
 
-                            }
                         }
-
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (IOException e) {
+                    gameModel.toMainMenu();
                 }
         }
     }
+
+    public void setMainMenu(MainMenu mainMenu){
+        gameModel.setMainMenu(mainMenu);
+    }
+
+    public void setFrame(JFrame frame){
+        gameModel.setFrame(frame);
+    }
+
 }

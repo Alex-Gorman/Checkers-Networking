@@ -1,8 +1,11 @@
 package GameMVC;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class ClientGame extends JPanel {
 
@@ -37,13 +40,25 @@ public class ClientGame extends JPanel {
         gameModel.addSubscriber(scoreBoard);
         scoreBoard.setPreferredSize(new Dimension(300, 100));
 
+
+        JButton quitButton = new JButton("Quit Game");
+        quitButton.setFont(new Font("SAN_SERIF", Font.PLAIN, 16));
+        quitButton.setMaximumSize(new Dimension(80,30));
+        quitButton.addActionListener(e -> {
+            gameController.quitGame();
+        });
+
+
+        JPanel quitPanel = new JPanel();
+        quitPanel.add(quitButton);
+
         GridBagLayout layout = new GridBagLayout();
         this.setLayout(layout);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(7,7,7,7);
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridheight = 2;
+        gbc.gridheight = 3;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         this.add(gameView,gbc);
@@ -57,6 +72,13 @@ public class ClientGame extends JPanel {
         gbc.gridheight = 1;
         gbc.gridwidth = 1;
         this.add(scoreBoard,gbc);
+        gbc.gridx = 2;
+        gbc.gridy = 3;
+        gbc.gridheight = 1;
+        gbc.gridwidth = 1;
+        this.add(quitPanel,gbc);
+
+
 
         gameModel.addSocket(socket);
         gameModel.sendInitMessage(gameModel.clientName);
@@ -82,30 +104,47 @@ public class ClientGame extends JPanel {
                 DataInputStream din = new DataInputStream(socket.getInputStream());
                 gameModel.setDataOutStream(new DataOutputStream(socket.getOutputStream()));
 
-                byte[] buffer = new byte[1024];
-                int numBytes;
-                String s = "";
+
 
                 while(true) {
-                    String msg = din.readUTF();
-                    if (msg.charAt(0) == '*'){
-                        gameModel.receiveChatMessage(msg);
-                    }else if(msg.charAt(0) == '@'){
-                        gameModel.receiveInitMessage(msg,false);
-                    }else{
 
-                        if (msg.length() <= 8) gameModel.takeIncomingMove(msg);
-                        else if (msg.length() >=8) gameModel.takeIncomingMultipleMove(msg);
+                        String msg = din.readUTF();
+                        if (msg.charAt(0) == '*'){
+                            gameModel.receiveChatMessage(msg);
+                        }else if(msg.charAt(0) == '@'){
+                            gameModel.receiveInitMessage(msg,false);
+                        }else if (msg.equals("%")){
+                            socket.close();
+                            gameModel.toMainMenu();
+                        }
+                        else{
 
-                        gameModel.canJump();
+                            if (msg.length() <= 8) gameModel.takeIncomingMove(msg);
+                            else gameModel.takeIncomingMultipleMove(msg);
 
-                    }
+                            gameModel.canJump();
+
+                        }
+
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                gameModel.toMainMenu();
             }
 
             System.out.println("Broke out of loop, buffer == -1");
         }
     }
+
+    public void setMainMenu(MainMenu mainMenu){
+        gameModel.setMainMenu(mainMenu);
+    }
+
+    public void setFrame(JFrame frame){
+        gameModel.setFrame(frame);
+    }
+
+//    public void setMySocket(Socket socket){
+//        gameModel.setMySocket(socket);
+//    }
+
 }

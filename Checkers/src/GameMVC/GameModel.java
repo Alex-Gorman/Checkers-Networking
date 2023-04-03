@@ -1,7 +1,9 @@
 package GameMVC;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.DataOutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -29,6 +31,8 @@ public class GameModel {
     String messageToSend = "";
 
     Socket socket;
+
+    ServerSocket serverSocket;
     ArrayList<String> chatMessage = new ArrayList<>();
     static DataOutputStream dout;
 
@@ -37,17 +41,21 @@ public class GameModel {
     String chatPrefix = "*";
     String initPrefix = "@";
 
-    int player1Score = 0;
-    int player2Score = 0;
+    int hostScore = 0;
+    int clientScore = 0;
+
+    MainMenu mainMenu;
+    JFrame frame;
 
     Boolean host;
+
+    String turn;
     public GameModel(Boolean host) {
         this.host = host;
 
         synchronized (this) {
             currentState = State.FIRST_PRESS;
         }
-//        currentState = State.FIRST_PRESS;
         numberOfClicks = 0;
         subs = new ArrayList<GameModelSubscriber>();
         playerOnePieces = new ArrayList<Piece>();
@@ -865,5 +873,52 @@ public class GameModel {
 
     public void setClientName(String clientName){
         this.clientName = clientName;
+    }
+
+    public void setMainMenu(MainMenu mainMenu) {this.mainMenu = mainMenu;}
+
+    public void setFrame(JFrame frame) {
+        this.frame = frame;
+    }
+
+    public void setServerSocket(ServerSocket serverSocket) {
+        this.serverSocket = serverSocket;
+    }
+
+    public void toMainMenu(){
+        try {
+            dout.writeUTF("%");
+        }catch (Exception e){
+        }
+        try {
+            serverSocket.close();
+        }catch (Exception e){
+        }
+        try {
+            socket.close();
+        }catch (Exception e){
+        }
+        this.frame.getContentPane().removeAll();
+        this.frame.getContentPane().add(this.mainMenu);
+        this.frame.revalidate();
+        this.frame.repaint();
+    }
+
+    // Alex, please use this function to update score board
+    public void updateScore(int newHostScore, int newClientScore){
+        this.hostScore = newHostScore;
+        this.clientScore = newClientScore;
+        notifySubscribers();
+    }
+
+    // Alex, use this to update turn, the parameter is the username
+    public void setTurn(String username) {
+        this.turn = turn;
+        notifySubscribers();
+    }
+
+    // Alex, when game over we need to start a new round
+    public void restart() {
+
     }
 }

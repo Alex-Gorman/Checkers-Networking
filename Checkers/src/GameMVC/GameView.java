@@ -59,7 +59,6 @@ public class GameView extends Panel implements GameModelSubscriber {
 
     @Override
     public void modelUpdated() {
-//        System.out.println("modelUpdated");
 
         /* Clear all the piece from the board */
         for (int row = 0; row < 8; row++) {

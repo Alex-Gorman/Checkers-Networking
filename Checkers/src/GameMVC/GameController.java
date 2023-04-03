@@ -1,6 +1,7 @@
 package GameMVC;
 
 import java.awt.event.ActionEvent;
+import java.util.Objects;
 
 public class GameController {
 
@@ -17,8 +18,16 @@ public class GameController {
         gameModel.addTileClick(row, col);
     }
 
-    // Leo Add
-    public void handleSend(ActionEvent e, String msg, Boolean isHost){
-        gameModel.sendChatMessage(msg, isHost);
+    public void handleSend(String msg, Boolean isHost){
+        if (!Objects.equals(msg, "")){
+            gameModel.sendChatMessage(msg, isHost);
+        }
+    }
+
+    public void quitGame(){
+        gameModel.toMainMenu();
+        try {
+            gameModel.socket.close();
+        }catch (Exception e){}
     }
 }

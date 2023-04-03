@@ -5,6 +5,8 @@ import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.DataOutputStream;
 
 public class ChatView extends JPanel implements GameModelSubscriber{
@@ -41,17 +43,43 @@ public class ChatView extends JPanel implements GameModelSubscriber{
         textArea.setEditable(false);
         textArea.setLineWrap(true);
         JButton send = new JButton("Send");
-        send.setPreferredSize(new Dimension(50,20));
-        send.setBackground(new Color(7, 94, 84));
-        send.setForeground(Color.WHITE);
+        send.setFont(new Font("SAN_SERIF", Font.BOLD, 14));
+        send.setPreferredSize(new Dimension(80,30));
         send.addActionListener(e -> {
             try {
-                gameController.handleSend(e, text.getText(), host);
+                gameController.handleSend(text.getText(), host);
+                text.setText("");
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
         });
-        send.setFont(new Font("SAN_SERIF", Font.PLAIN, 16));
+        send.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    try {
+                        gameController.handleSend(text.getText(), false);
+                        text.setText("");
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+        });
+        text.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    try {
+                        gameController.handleSend(text.getText(), false);
+                        text.setText("");
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        this.setFocusable(true);
+        this.requestFocusInWindow();
 
         this.add(scrollPane);
         this.add(text);
@@ -66,20 +94,7 @@ public class ChatView extends JPanel implements GameModelSubscriber{
     }
     @Override
     public void modelUpdated() {
-//        panel.removeAll();
-//        this.panel.setLayout(new GridBagLayout());
-//        GridBagConstraints gbc = new GridBagConstraints();
-//        model.getChatMessage().forEach( s -> {
-//            JLabel label = new JLabel(s);
-//            label.setVerticalAlignment(SwingConstants.TOP);
-//            gbc.gridx = 0;
-//            gbc.gridy += 1;
-//            gbc.anchor = GridBagConstraints.NORTHWEST;
-//            gbc.fill = GridBagConstraints.NONE;
-//            gbc.weightx = 1.0;
-//            gbc.weighty = 1.0;
-//            this.panel.add(label, gbc);
-//        });
+
         textArea.setText("");
         model.getChatMessage().forEach( s -> {
             textArea.setText(textArea.getText() + s + "\n");
@@ -87,5 +102,9 @@ public class ChatView extends JPanel implements GameModelSubscriber{
         this.revalidate();
         this.repaint();
 
+    }
+
+    public String getText() {
+        return text.getText();
     }
 }
