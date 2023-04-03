@@ -762,7 +762,7 @@ public class GameModel {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 8; col++) {
                 if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
-                    this.addPiecePlayerTwo(new Piece(row, col, false, Color.white));
+                    this.addPiecePlayerTwo(new Piece(row, col, false, white));
                 }
             }
         }
@@ -771,7 +771,7 @@ public class GameModel {
         for (int row = 5; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
-                    this.addPiecePlayerOne(new Piece(row, col, true, Color.black));
+                    this.addPiecePlayerOne(new Piece(row, col, true, black));
                 }
             }
         }
@@ -782,13 +782,16 @@ public class GameModel {
         resetGameVariables();
         currentState = State.OTHER_PLAYER;
 
+        Color black = new Color(21,21,21,255);
+        Color white = new Color(225,220,185,255);
+
 //        setPlayerStateToOtherPlayerTurn();
 
         /* Set the black player (2) moves */
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 8; col++) {
                 if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
-                    this.addPiecePlayerTwo(new Piece(row, col, false, Color.black));
+                    this.addPiecePlayerTwo(new Piece(row, col, false, black));
                 }
             }
         }
@@ -797,7 +800,7 @@ public class GameModel {
         for (int row = 5; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
                 if (row % 2 == 0 && col % 2 != 0 || row % 2 != 0 && col % 2 == 0) {
-                    this.addPiecePlayerOne(new Piece(row, col, true, Color.white));
+                    this.addPiecePlayerOne(new Piece(row, col, true, white));
                 }
             }
         }
