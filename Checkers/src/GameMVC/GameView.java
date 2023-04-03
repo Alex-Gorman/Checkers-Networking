@@ -82,7 +82,6 @@ public class GameView extends Panel implements GameModelSubscriber {
         /* Tiles player can move to */
         model.getTilesPlayerCanMoveTo().forEach(tile -> {
             tile.setBackground(Color.ORANGE);
-            System.out.println("painted orange");
         });
 
         model.tilesOfPiecesThatCanJump.forEach(tile -> tile.setBackground(Color.cyan));

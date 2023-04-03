@@ -525,8 +525,6 @@ public class GameModel {
             }
             case SECOND_PRESS -> {
 
-                System.out.println("SECOND_PRESS");
-
                 /* Get the piece of the first button press */
                 Piece p = tiles[playerRow][playerCol].piece;
 
@@ -542,7 +540,6 @@ public class GameModel {
                 }
 
                 if (!validMove) {
-                    System.out.println("Invalid move");
 
                     /* Re-assign these values to be nothing */
                     playerRow = -1;
@@ -552,7 +549,6 @@ public class GameModel {
                     resetTilesPlayerCanMoveTo();
 
                     /* Re-assign state */
-                    System.out.println("Size of tiles pieces that can jump array = "+tilesOfPiecesThatCanJump.size());
                     if (tilesOfPiecesThatCanJump.size() != 0) {
                         canJump();
                         return ;
@@ -614,8 +610,6 @@ public class GameModel {
                     if (justMadeAJump && canJumpAgain(p)) {
                         playerRow = row;
                         playerCol = col;
-                        System.out.println("playerRow="+playerRow);
-                        System.out.println("playerCol="+playerCol);
                         notifySubscribers();
 
                         return;
@@ -654,11 +648,6 @@ public class GameModel {
 
         int count = 0;
         for (Piece p: playerOnePieces) {
-            System.out.println(" ");
-            System.out.println("count="+count);
-            System.out.println("row="+p.row);
-            System.out.println("col="+p.col);
-            System.out.println(" ");
             count++;
         }
 
@@ -669,18 +658,10 @@ public class GameModel {
                 p.col = colCur;
                 tiles[rowCur][colCur].piece = p;
 
-                System.out.println(" ");
-                System.out.println("ROW PRV ="+rowPrev);
-                System.out.println("COL PRV ="+colPrev);
-                System.out.println("ROW CUR ="+rowCur);
-                System.out.println("COL CUR ="+colCur);
-
-
                 /* Check if the piece made a jump */
                 int colToDelete = -1;
                 int rowToDelete = -1;
                 if ((Math.abs(rowPrev - rowCur))>=2 || (Math.abs(colPrev - colCur))>=2) {
-                    System.out.println("JUMP SHOULD BE MADE");
                     if (rowCur > rowPrev) {
                         rowToDelete = rowCur - 1;
                         if (colCur > colPrev) colToDelete = colCur - 1;
@@ -705,9 +686,6 @@ public class GameModel {
                     }
                 }
 
-                System.out.println("ROW TO DELETE ="+rowToDelete);
-                System.out.println("COL TO DELETE ="+colToDelete);
-
                 /* If the piece makes it to the last row, then set it to a king */
                 if (p.row == 7) {
                     p.setKing();
@@ -716,7 +694,6 @@ public class GameModel {
             }
         }
         if (checkPlayerOneLost()) {
-            System.out.println("GOT HERE 2");
             if (host){
                 updateScore(hostScore, clientScore+1);
 
@@ -733,7 +710,6 @@ public class GameModel {
 
             currentState = State.OTHER_PLAYER;
             messageToSend = "";
-            System.out.println("CURRENT STATE ="+currentState);
 //            gameStarted = false;
 
         }
@@ -827,7 +803,6 @@ public class GameModel {
 
     public void setPlayerStateToOtherPlayerTurn() {
 
-        System.out.println("GOT HERE 1");
         if (checkGameOver()) {
             if (checkPlayerTwoLost()) {
                 if (host){
@@ -893,7 +868,6 @@ public class GameModel {
     public void sendInitMessage(String msg){
         try {
             dout.writeUTF(initPrefix + msg);
-            System.out.println("send");
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -913,7 +887,6 @@ public class GameModel {
         }else{
             setHostName(msg);
         }
-        System.out.println(msg);
         notifySubscribers();
     }
 
